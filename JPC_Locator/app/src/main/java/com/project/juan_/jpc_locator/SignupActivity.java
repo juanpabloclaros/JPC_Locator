@@ -1,0 +1,87 @@
+package com.project.juan_.jpc_locator;
+
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+
+public class SignupActivity extends AppCompatActivity {
+
+    // Declaramos las variables con las que vamos a enlazar a los campos que se han creado en signup.
+    private EditText txtNombre, txtEmail, txtPassword, txtPasswordRepetida;
+    private Button btnRegistrar;
+
+    // Declaramos la variable que nos da Firebase para llevar a cabo la autenticacion
+    private FirebaseAuth mAuth;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_signup);
+        txtNombre = (EditText) findViewById(R.id.registroNombre);
+        txtEmail = (EditText) findViewById(R.id.registroEmail);
+        txtPassword = (EditText) findViewById(R.id.registroPassword);
+        txtPasswordRepetida = (EditText) findViewById(R.id.registroPasswordRepetida);
+        btnRegistrar = (Button) findViewById(R.id.registroRegistrar);
+
+        // Inicializamos la variable de Firebase
+        mAuth = FirebaseAuth.getInstance();
+
+        // Habilitamos el evento de regitrarse
+        btnRegistrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String email = txtEmail.getText().toString();
+                if(emailValido(email) && validarPassword()) {
+                    String password = txtPassword.getText().toString();
+                    
+                    // Pasamos la dirección de correo electrónico y contraseña del nuevo usuario a esta
+                    // funcion para crear la nueva cuenta
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        Toast.makeText(SignupActivity.this, "Se registró correctamente", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        // If sign in fails, display a message to the user.
+                                        Toast.makeText(SignupActivity.this, "Error al registrarse", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }else{
+                    Toast.makeText(SignupActivity.this, "Validaciones funcionando", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    // Funcion para comprobar que el correo es válido
+    public final static boolean emailValido(CharSequence target){
+        return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+    // Funcion para comprobar que la contraseña es valida
+    public boolean validarPassword(){
+        String password, passwordRepetida;
+        password = txtPassword.getText().toString();
+        passwordRepetida = txtPasswordRepetida.getText().toString();
+        if(password.equals(passwordRepetida)){
+            if(password.length()>=6 && password.length()<=16){
+                return true;
+            }else return false;
+        }else return false;
+    }
+}

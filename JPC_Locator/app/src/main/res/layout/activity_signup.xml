@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--Con gravity lo que hacemos es centrar los campos, y le ponemos padding para que no esté-->
+<!--pegado a los bordes-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="10sp">
+
+    <!--A continuacion creamos los campos que va a tener el registro, y le asignamos su correspondiente id-->
+    <EditText
+        android:id="@+id/registroNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"/>
+    <EditText
+        android:id="@+id/registroEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Correo"
+        android:inputType="textEmailAddress"/>
+    <EditText
+        android:id="@+id/registroPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:inputType="textPassword"/>
+    <EditText
+        android:id="@+id/registroPasswordRepetida"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Repetir Contraseña"
+        android:inputType="textPassword"/>
+    <Button
+        android:id="@+id/registroRegistrar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Registrar"/>
+
+</LinearLayout>
