@@ -69,6 +69,9 @@ public class SignupActivity extends AppCompatActivity {
                                         usuario.setNombre(nombre);
                                         usuario.setEmail(email);
                                         referenceUsuarios.push().setValue(usuario);
+
+                                        // con finish se acaba la ctividad y volvera a la principal
+                                        finish();
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Toast.makeText(SignupActivity.this, "Error al registrarse", Toast.LENGTH_SHORT).show();
@@ -83,7 +86,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     // Funcion para comprobar que el correo es válido
-    public final static boolean emailValido(CharSequence target){
+    private boolean emailValido(CharSequence target){
         return !TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
