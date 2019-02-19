@@ -97,7 +97,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Toast.makeText(this, "Usuario logueado", Toast.LENGTH_SHORT).show();
@@ -108,5 +107,8 @@ public class LoginActivity extends AppCompatActivity {
     // Nos manda a la otra acitividad
     private void nextActivity(){
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+        // Cada vez que mandamos a otra actividad, la actividad de login la eliminamos para que no se quede en segundo plano
+        finish();
     }
 }

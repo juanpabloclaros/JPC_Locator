@@ -1,5 +1,6 @@
 package com.project.juan_.jpc_locator;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +26,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                finish();
+
+                // Cuando cierras sesion, te lleva otra vez al login por si quieres iniciar sesion con otra cuenta
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
         });
     }
