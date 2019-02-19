@@ -15,6 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -24,6 +27,10 @@ public class SignupActivity extends AppCompatActivity {
 
     // Declaramos la variable que nos da Firebase para llevar a cabo la autenticacion
     private FirebaseAuth mAuth;
+
+    // Instanciamos una referencia para los usuarios e instanciamos la base de datos
+    private DatabaseReference referenceUsuarios;
+    private FirebaseDatabase database;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,13 +44,16 @@ public class SignupActivity extends AppCompatActivity {
 
         // Inicializamos la variable de Firebase
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        referenceUsuarios = database.getReference("Usuarios");
 
         // Habilitamos el evento de regitrarse
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = txtEmail.getText().toString();
-                if(emailValido(email) && validarPassword()) {
+                final String email = txtEmail.getText().toString();
+                final String nombre = txtNombre.getText().toString();
+                if(emailValido(email) && validarPassword() && validarNombre(nombre)) {
                     String password = txtPassword.getText().toString();
                     
                     // Pasamos la dirección de correo electrónico y contraseña del nuevo usuario a esta
@@ -55,6 +65,10 @@ public class SignupActivity extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         // Sign in success, update UI with the signed-in user's information
                                         Toast.makeText(SignupActivity.this, "Se registró correctamente", Toast.LENGTH_SHORT).show();
+                                        Usuario usuario = new Usuario();
+                                        usuario.setNombre(nombre);
+                                        usuario.setEmail(email);
+                                        referenceUsuarios.push().setValue(usuario);
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Toast.makeText(SignupActivity.this, "Error al registrarse", Toast.LENGTH_SHORT).show();
@@ -83,5 +97,9 @@ public class SignupActivity extends AppCompatActivity {
                 return true;
             }else return false;
         }else return false;
+    }
+
+    public boolean validarNombre(String nombre){
+        return !nombre.isEmpty();
     }
 }
