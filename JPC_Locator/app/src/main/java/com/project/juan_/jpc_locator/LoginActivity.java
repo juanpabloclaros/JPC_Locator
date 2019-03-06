@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                 }else{
-                    Toast.makeText(LoginActivity.this,"Validaciones funcionando", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Error al iniciar sesión. Compruebe que los valores son correctos.", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -79,7 +79,7 @@ public class SignupActivity extends AppCompatActivity {
                                 }
                             });
                 }else{
-                    Toast.makeText(SignupActivity.this, "Las contraseñas no coinciden o el nombre esta vacío. Por favor, compruebe los datos.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignupActivity.this, "Las contraseñas no coinciden o son muy pequeñas o el nombre esta vacío. Por favor, compruebe los datos insertados.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
