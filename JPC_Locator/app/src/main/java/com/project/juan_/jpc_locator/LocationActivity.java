@@ -23,6 +23,7 @@ import java.util.Map;
 
 public class LocationActivity extends AppCompatActivity {
 
+    private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
     // Instanciamos la variable de localizacion que nos indica la documentacion
     private FusedLocationProviderClient fusedLocationClient;
     private FirebaseAuth mAuth;
@@ -53,14 +54,14 @@ public class LocationActivity extends AppCompatActivity {
     }
 
     private void subirLatLongFirebase() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+//            Con esta linea le pedimos al usuario que active los permisos
+            ActivityCompat.requestPermissions(LocationActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+
             return;
         }
         fusedLocationClient.getLastLocation()
