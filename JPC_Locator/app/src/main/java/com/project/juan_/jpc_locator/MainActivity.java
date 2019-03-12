@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private FirebaseAuth mAuth;
-    private Button btnSignOut;
+    private Button btnSignOut, btnMaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         btnSignOut = (Button) findViewById(R.id.signOut);
+        btnMaps = (Button) findViewById(R.id.maps);
 
         btnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,6 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // Cuando cierras sesion, te lleva otra vez al login por si quieres iniciar sesion con otra cuenta
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
+
+        btnMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cuando cierras sesion, te lleva otra vez al login por si quieres iniciar sesion con otra cuenta
+                startActivity(new Intent(MainActivity.this, MapsActivity.class));
             }
         });
     }
