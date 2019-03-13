@@ -64,6 +64,7 @@ public class LocationActivity extends AppCompatActivity {
 
             return;
         }
+
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
