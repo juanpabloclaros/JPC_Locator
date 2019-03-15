@@ -22,7 +22,7 @@ import com.project.juan_.jpc_locator.Entidades.Usuario;
 public class SignupActivity extends AppCompatActivity {
 
     // Declaramos las variables con las que vamos a enlazar a los campos que se han creado en signup.
-    private EditText txtNombre, txtEmail, txtPassword, txtPasswordRepetida;
+    private EditText txtNombre, txtEmail, txtPassword, txtPasswordRepetida, txtTelefono;
     private Button btnRegistrar;
 
     // Declaramos la variable que nos da Firebase para llevar a cabo la autenticacion
@@ -37,6 +37,7 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         txtNombre = (EditText) findViewById(R.id.registroNombre);
+        txtTelefono = (EditText) findViewById(R.id.registroTelefono);
         txtEmail = (EditText) findViewById(R.id.registroEmail);
         txtPassword = (EditText) findViewById(R.id.registroPassword);
         txtPasswordRepetida = (EditText) findViewById(R.id.registroPasswordRepetida);
@@ -53,6 +54,7 @@ public class SignupActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String email = txtEmail.getText().toString();
                 final String nombre = txtNombre.getText().toString();
+                final int telefono = Integer.parseInt(txtTelefono.getText().toString());
                 if(emailValido(email) && validarPassword() && validarNombre(nombre)) {
                     String password = txtPassword.getText().toString();
                     
@@ -68,6 +70,7 @@ public class SignupActivity extends AppCompatActivity {
                                         Usuario usuario = new Usuario();
                                         usuario.setNombre(nombre);
                                         usuario.setEmail(email);
+                                        usuario.setNumero(telefono);
                                         referenceUsuarios.push().setValue(usuario);
 
                                         // con finish se acaba la ctividad y volvera a la principal
