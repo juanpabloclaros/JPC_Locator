@@ -3,6 +3,7 @@ package com.project.juan_.jpc_locator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -77,6 +78,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // Cogemos cada uno de los valores
                     Double Latitud = mp.getLatitud();
                     Double Longitud = mp.getLongitud();
+
+                    Log.e("Latitud:", String.valueOf(Latitud));
+                    Log.e("Longitud:", String.valueOf(Longitud));
 
                     // Creamos un markerOptions que es donde vamos a poner los puntos en el mapa
                     MarkerOptions markerOptions = new MarkerOptions();
