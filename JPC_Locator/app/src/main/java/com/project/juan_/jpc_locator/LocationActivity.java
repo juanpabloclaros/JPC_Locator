@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +29,7 @@ public class LocationActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    private Button btnSignOut;
+    private Button btnSignOut, btnMaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class LocationActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         btnSignOut = (Button) findViewById(R.id.signOut);
+        btnMaps = (Button) findViewById(R.id.maps);
 
         subirLatLongFirebase();
 
@@ -51,7 +53,16 @@ public class LocationActivity extends AppCompatActivity {
                 startActivity(new Intent(LocationActivity.this, LoginActivity.class));
             }
         });
+
+        btnMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Cuando cierras sesion, te lleva otra vez al login por si quieres iniciar sesion con otra cuenta
+                startActivity(new Intent(LocationActivity.this, MapsActivity.class));
+            }
+        });
     }
+
 
     private void subirLatLongFirebase() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -74,7 +85,7 @@ public class LocationActivity extends AppCompatActivity {
                             Map<String,Object> coord = new HashMap<>();
                             coord.put("Latitud",location.getLatitude());
                             coord.put("Longitud",location.getLongitude());
-                            mDatabase.child("coordenadas").push().setValue(coord);
+                            mDatabase.child("Usuarios").child("651234976").child("posición").setValue(coord);
                         }
                     }
                 });

@@ -9,6 +9,18 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/addUsuarioMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Añadir a grupo" />
+
+    <Button
+        android:id="@+id/addGroupMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Crear Grupo" />
+
+    <Button
         android:id="@+id/maps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

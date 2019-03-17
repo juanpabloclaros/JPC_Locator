@@ -7,5 +7,7 @@
     <string name="login">Login</string>
     <string name="registrar">Registrarse</string>
     <string name="numeroTelefono">Número teléfono</string>
+    <string name="nombreGrupo">Nombre del grupo</string>
+    <string name="agregar">Añadir</string>
     <string name="title_activity_maps">Map</string>
 </resources>

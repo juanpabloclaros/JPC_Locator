@@ -71,7 +71,7 @@ public class SignupActivity extends AppCompatActivity {
                                         usuario.setNombre(nombre);
                                         usuario.setEmail(email);
                                         usuario.setNumero(telefono);
-                                        referenceUsuarios.push().setValue(usuario);
+                                        referenceUsuarios.child(String.valueOf(telefono)).setValue(usuario);
 
                                         // con finish se acaba la ctividad y volvera a la principal
                                         finish();
