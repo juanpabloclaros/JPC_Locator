@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
+
+                Usuario usuario = new Usuario();
+                usuario.setUsuario("nada");
 
                 // Cuando cierras sesion, te lleva otra vez al login por si quieres iniciar sesion con otra cuenta
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -59,5 +63,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddUsuarioActivity.class));
             }
         });
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 }

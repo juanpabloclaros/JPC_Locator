@@ -108,4 +108,10 @@ public class SignupActivity extends AppCompatActivity {
     public boolean validarNombre(String nombre){
         return !nombre.isEmpty();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
+    }
 }

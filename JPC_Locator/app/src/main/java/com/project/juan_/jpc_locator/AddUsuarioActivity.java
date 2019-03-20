@@ -38,29 +38,34 @@ public class AddUsuarioActivity extends AppCompatActivity {
         txtTelefono = (EditText) findViewById(R.id.usuarioTelefono);
         spGrupos = (Spinner) findViewById(R.id.spinnerGrupos);
 
-        ArrayList<String> grupos = fetchGrupos();
+        fetchGrupos();
+
+    }
+
+    private void valoresSpinner(ArrayList<String> listaGrupos) {
 
         // Asignamos los valores al Spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, grupos);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listaGrupos);
         spGrupos.setAdapter(adapter);
 
         // Cuando pulsemos el botón, vamos a añadir al usuario al grupo
         btnAddUsuario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("Usuarios").child(txtTelefono.getText().toString()).child("Grupos").push().setValue(spGrupos.getSelectedItem().toString());
+                mDatabase.child("Usuarios_por_grupo").child(spGrupos.getSelectedItem().toString()).push().setValue(txtTelefono.getText().toString());
                 nextActivity();
             }
         });
     }
 
-    private ArrayList<String> fetchGrupos() {
-
-        final ArrayList<String> grupos = new ArrayList<String>();
+    private void fetchGrupos() {
 
         mDatabase.child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                ArrayList<String> grupos = new ArrayList<>();
 
                 // Con este for recorremos los hijos del nodo
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
@@ -69,15 +74,17 @@ public class AddUsuarioActivity extends AppCompatActivity {
                     grupos.add(String.valueOf(snapshot.getValue()));
 
                 }
+
+                valoresSpinner(grupos);
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
 
-        return grupos;
+        });
     }
 
     // Nos manda a la otra acitividad
@@ -85,6 +92,12 @@ public class AddUsuarioActivity extends AppCompatActivity {
         startActivity(new Intent(AddUsuarioActivity.this, MainActivity.class));
 
         // Cada vez que mandamos a otra actividad, la actividad de login la eliminamos para que no se quede en segundo plano
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         finish();
     }
 }

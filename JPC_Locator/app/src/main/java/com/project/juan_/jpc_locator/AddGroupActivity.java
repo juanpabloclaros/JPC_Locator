@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +28,13 @@ public class AddGroupActivity extends AppCompatActivity {
         btnAddGroup = (Button) findViewById(R.id.addGroup);
         txtGroup = (EditText) findViewById(R.id.nombreGrupo);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        final Usuario usuario = new Usuario();
 
         btnAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDatabase.child("Grupos").push().setValue(txtGroup.getText().toString());
+                mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").push().setValue(txtGroup.getText().toString());
                 nextActivity();
             }
         });
@@ -42,6 +45,12 @@ public class AddGroupActivity extends AppCompatActivity {
         startActivity(new Intent(AddGroupActivity.this, MainActivity.class));
 
         // Cada vez que mandamos a otra actividad, la actividad de login la eliminamos para que no se quede en segundo plano
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         finish();
     }
 }
