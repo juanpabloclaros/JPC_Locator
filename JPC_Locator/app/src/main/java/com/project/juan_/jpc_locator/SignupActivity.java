@@ -65,13 +65,22 @@ public class SignupActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Toast.makeText(SignupActivity.this, "Se registró correctamente", Toast.LENGTH_SHORT).show();
-                                        Usuario usuario = new Usuario();
-                                        usuario.setNombre(nombre);
-                                        usuario.setEmail(email);
-                                        usuario.setNumero(telefono);
-                                        referenceUsuarios.child(String.valueOf(telefono)).setValue(usuario);
+                                        mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    // Sign in success, update UI with the signed-in user's information
+                                                    Toast.makeText(SignupActivity.this, "Se registró correctamente. Por favor, compruebe su email para verificar su cuenta.", Toast.LENGTH_SHORT).show();
+                                                    Usuario usuario = new Usuario();
+                                                    usuario.setNombre(nombre);
+                                                    usuario.setEmail(email);
+                                                    usuario.setNumero(telefono);
+                                                    referenceUsuarios.child(String.valueOf(mAuth.getUid())).setValue(usuario);
+                                                }else{
+                                                    Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
 
                                         // con finish se acaba la ctividad y volvera a la principal
                                         finish();

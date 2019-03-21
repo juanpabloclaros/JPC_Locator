@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,6 +138,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void subirLatLongFirebase() {
+
+        final Usuario usuario = new Usuario();
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -157,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             Map<String,Object> coord = new HashMap<>();
                             coord.put("Latitud",location.getLatitude());
                             coord.put("Longitud",location.getLongitude());
-                            mDatabase.child("Usuarios").child("651234976").child("posición").setValue(coord);
+                            mDatabase.child("Usuarios").child(usuario.getUsuario()).child("posición").setValue(coord);
                         }
                     }
                 });

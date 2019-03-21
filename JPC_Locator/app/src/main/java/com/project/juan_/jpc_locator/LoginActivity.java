@@ -22,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Instanciamos los objetos
     private EditText txtEmail, txtPassword;
-    private Button btnLogin, btnRegistro;
+    private Button btnLogin, btnRegistro, btnOlvidar;
 
     // Firebase
     private FirebaseAuth mAuth;
@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         txtPassword = (EditText) findViewById(R.id.loginPassword);
         btnLogin = (Button) findViewById(R.id.loginLogin);
         btnRegistro = (Button) findViewById(R.id.loginRegistrar);
+        btnOlvidar = (Button) findViewById(R.id.loginOlvidar);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -54,11 +55,15 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        Toast.makeText(LoginActivity.this,"Ha iniciado sesión correctamente.", Toast.LENGTH_SHORT).show();
-                                        Usuario usuario = new Usuario();
-                                        usuario.setUsuario(email);
-                                        nextActivity();
+                                        if (mAuth.getCurrentUser().isEmailVerified()){
+                                            // Sign in success, update UI with the signed-in user's information
+                                            Toast.makeText(LoginActivity.this,"Ha iniciado sesión correctamente.", Toast.LENGTH_SHORT).show();
+                                            Usuario usuario = new Usuario();
+                                            usuario.setUsuario(mAuth.getUid());
+                                            nextActivity();
+                                        }else{
+                                            Toast.makeText(LoginActivity.this, "Por favor, verifique su correo electrónico.", Toast.LENGTH_SHORT).show();
+                                        }
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Toast.makeText(LoginActivity.this,"Error, los datos no son correctos.", Toast.LENGTH_SHORT).show();
@@ -77,6 +82,14 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Cada vez que se registra, se va a la pestaña de login
                 startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+            }
+        });
+
+        btnOlvidar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // vamos a la activity de restablecer la contraseña
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
             }
         });
     }
@@ -101,8 +114,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Toast.makeText(this, "Usuario logueado", Toast.LENGTH_SHORT).show();
+        if(currentUser != null && currentUser.isEmailVerified()){
+            Usuario usuario = new Usuario();
+            usuario.setUsuario(currentUser.getUid());
             nextActivity();
         }
     }

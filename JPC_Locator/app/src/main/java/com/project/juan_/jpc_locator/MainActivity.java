@@ -5,13 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 public class MainActivity extends AppCompatActivity {
-
 
     private FirebaseAuth mAuth;
     private Button btnSignOut, btnMaps, btnAddGroup, btnAddUsuario;
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         btnMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // Con este botón vas al MapsActivity
                 startActivity(new Intent(MainActivity.this, MapsActivity.class));
             }
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, AddUsuarioActivity.class));
             }
         });
+
 
     }
 
