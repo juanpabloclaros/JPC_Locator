@@ -1,8 +1,11 @@
 package com.project.juan_.jpc_locator;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -36,6 +39,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
     private FusedLocationProviderClient fusedLocationClient;
+    private LocationManager mLocationManager;
+    final Usuario usuario = new Usuario();
 
     // Creamos una referencia a la base de datos
     private DatabaseReference mDatabase;
@@ -56,27 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        subirLatLongFirebase();
-        countDownTimer();
-
-    }
-
-    // Con CountDownTimer() lo que hace es que revisa los valores cada cierto tiempo. Podemos mirar como funciona en la documentacion
-    private void countDownTimer(){
-
-        new CountDownTimer(5000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            public void onFinish() {
-                // Aqui vamos a ir actualizando los puntos, vamos a ir cogiendo los valores cada 2 segundos(2000)
-                Toast.makeText(MapsActivity.this, "Puntos actualizados", Toast.LENGTH_SHORT).show();
-                subirLatLongFirebase();
-                onMapReady(mMap);
-            }
-        }.start();
+        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
     }
 
@@ -95,7 +80,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Con esto le damos al usuario el poder controlar el zoom
         mMap.getUiSettings().setZoomControlsEnabled(true);
+        subirLatLongFirebase();
 
+
+    }
+
+    private void obtenerLatLong() {
         // Con addValueEventListener() lo que va a hacer es que cada vez qeu cambien los valores de coordenadas, se va a lanzar ese método
         mDatabase.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -119,6 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     // Creamos un markerOptions que es donde vamos a poner los puntos en el mapa
                     MarkerOptions markerOptions = new MarkerOptions();
                     markerOptions.position(new LatLng(Latitud,Longitud));
+                    markerOptions.title(snapshot.getValue(Usuario.class).getNombre());
 
                     // Usamos los ArrayList para ir actualizando los markers
                     tmpRealTimeMarkers.add(mMap.addMarker(markerOptions));
@@ -126,7 +117,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 realTimeMarkers.clear();
                 realTimeMarkers.addAll(tmpRealTimeMarkers);
-                countDownTimer();
 
             }
 
@@ -138,8 +128,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void subirLatLongFirebase() {
-
-        final Usuario usuario = new Usuario();
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -162,9 +150,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             coord.put("Latitud",location.getLatitude());
                             coord.put("Longitud",location.getLongitude());
                             mDatabase.child("Usuarios").child(usuario.getUsuario()).child("posición").setValue(coord);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),17));
+                            obtenerLatLong();
                         }
                     }
                 });
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if (location != null) {
+                    Map<String,Object> coord = new HashMap<>();
+                    coord.put("Latitud",location.getLatitude());
+                    coord.put("Longitud",location.getLongitude());
+                    mDatabase.child("Usuarios").child(usuario.getUsuario()).child("posición").setValue(coord);
+                    obtenerLatLong();
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        });
+
     }
 
     @Override
