@@ -1,5 +1,6 @@
 package com.project.juan_.jpc_locator;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     // Instanciamos los objetos
     private EditText txtEmail, txtPassword;
     private Button btnLogin, btnRegistro, btnOlvidar;
+    private ProgressDialog pd;
 
     // Firebase
     private FirebaseAuth mAuth;
@@ -46,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pd = ProgressDialog.show(LoginActivity.this,"Iniciar sesión","Iniciando sesión, por favor espere...");
                 final String email = txtEmail.getText().toString();
                 if(emailValido(email) && validarPassword()) {
                     String password = txtPassword.getText().toString();
@@ -55,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        pd.dismiss();
                                         if (mAuth.getCurrentUser().isEmailVerified()){
                                             // Sign in success, update UI with the signed-in user's information
                                             Toast.makeText(LoginActivity.this,"Ha iniciado sesión correctamente.", Toast.LENGTH_SHORT).show();
@@ -66,12 +70,14 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     } else {
                                         // If sign in fails, display a message to the user.
+                                        pd.dismiss();
                                         Toast.makeText(LoginActivity.this,"Error, los datos no son correctos.", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }
                             });
                 }else{
+                    pd.dismiss();
                     Toast.makeText(LoginActivity.this,"Error al iniciar sesión. Compruebe que los valores son correctos.", Toast.LENGTH_SHORT).show();
                 }
             }

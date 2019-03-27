@@ -1,5 +1,6 @@
 package com.project.juan_.jpc_locator;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ public class SignupActivity extends AppCompatActivity {
     // Declaramos las variables con las que vamos a enlazar a los campos que se han creado en signup.
     private EditText txtNombre, txtEmail, txtPassword, txtPasswordRepetida, txtTelefono;
     private Button btnRegistrar;
+    private ProgressDialog pd;
 
     // Declaramos la variable que nos da Firebase para llevar a cabo la autenticacion
     private FirebaseAuth mAuth;
@@ -52,6 +54,7 @@ public class SignupActivity extends AppCompatActivity {
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pd = ProgressDialog.show(SignupActivity.this,"Registrarse","Comprobando los datos para el registro...");
                 final String email = txtEmail.getText().toString();
                 final String nombre = txtNombre.getText().toString();
                 final int telefono = Integer.parseInt(txtTelefono.getText().toString());
@@ -65,6 +68,7 @@ public class SignupActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        pd.dismiss();
                                         mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -86,11 +90,13 @@ public class SignupActivity extends AppCompatActivity {
                                         finish();
                                     } else {
                                         // If sign in fails, display a message to the user.
+                                        pd.dismiss();
                                         Toast.makeText(SignupActivity.this, "Error al registrarse", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                 }else{
+                    pd.dismiss();
                     Toast.makeText(SignupActivity.this, "Las contraseñas no coinciden o son muy pequeñas o el nombre esta vacío. Por favor, compruebe los datos insertados.", Toast.LENGTH_SHORT).show();
                 }
             }

@@ -1,10 +1,10 @@
 package com.project.juan_.jpc_locator;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -20,8 +20,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AddUsuarioActivity extends AppCompatActivity {
 
@@ -29,6 +27,7 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private Button btnAddUsuario;
     private EditText txtTelefono;
     private Spinner spGrupos;
+    private ProgressDialog pd;
     private boolean encontrado = false;
     private String key;
 
@@ -60,6 +59,9 @@ public class AddUsuarioActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                encontrado = false;
+                pd = ProgressDialog.show(AddUsuarioActivity.this,"Añadir amigo","Añadiendo amigo al grupo...");
+
                 mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -78,22 +80,24 @@ public class AddUsuarioActivity extends AppCompatActivity {
                                         // Buscamos el telefono que coincida con el introducido. Una vez lo encontremos, vamos a buscar dentro de sus grupos.
                                         if(Integer.toString(snapshot.getValue(Usuario.class).getNumero()).equals(txtTelefono.getText().toString())){
 
+                                            key = snapshot.getKey();
                                             for(DataSnapshot data: dataSnapshot.child(snapshot.getKey()).child("Grupos").getChildren()){
 
                                                 // Buscamos si el grupo seleccionado esta dentro de los grupos a los que pertenece el usuario
                                                 if(spGrupos.getSelectedItem().toString().equals(data.getValue())){
                                                     encontrado = true;
-                                                    key = snapshot.getKey();
                                                 }
                                             }
                                         }
                                     }
 
-                                    if(encontrado)
+                                    pd.dismiss();
+                                    if(encontrado){
                                         Toast.makeText(AddUsuarioActivity.this, "El número ya está añadido al grupo.", Toast.LENGTH_SHORT).show();
-                                    else {
+                                    }else {
                                         Toast.makeText(AddUsuarioActivity.this, "Se ha añadido correctamente.", Toast.LENGTH_SHORT).show();
                                         mDatabase.child("Usuarios_por_grupo").child(spGrupos.getSelectedItem().toString()).push().setValue(key);
+                                        mDatabase.child("Usuarios").child(key).child("Grupos").push().setValue(spGrupos.getSelectedItem().toString());
                                         nextActivity();
                                     }
                                 }
@@ -113,8 +117,11 @@ public class AddUsuarioActivity extends AppCompatActivity {
                                     for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
                                         // Buscamos el telefono que coincida con el introducido. Una vez lo encontremos, añadimos al grupo la key de ese usuario
-                                        if(Integer.toString(snapshot.getValue(Usuario.class).getNumero()).equals(txtTelefono.getText().toString()))
+                                        if(Integer.toString(snapshot.getValue(Usuario.class).getNumero()).equals(txtTelefono.getText().toString())) {
+                                            pd.dismiss();
+                                            Toast.makeText(AddUsuarioActivity.this, "Se ha añadido correctamente.", Toast.LENGTH_SHORT).show();
                                             mDatabase.child("Usuarios_por_grupo").child(spGrupos.getSelectedItem().toString()).push().setValue(snapshot.getKey());
+                                        }
                                     }
                                 }
 
