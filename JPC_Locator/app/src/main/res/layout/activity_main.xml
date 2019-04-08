@@ -21,6 +21,12 @@
         android:hint="Crear Grupo" />
 
     <Button
+        android:id="@+id/deleteGroupMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Borrar Grupo" />
+
+    <Button
         android:id="@+id/maps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

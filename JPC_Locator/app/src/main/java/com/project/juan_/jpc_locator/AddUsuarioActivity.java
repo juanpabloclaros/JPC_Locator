@@ -30,6 +30,7 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private ProgressDialog pd;
     private boolean encontrado = false;
     private String key;
+    final Usuario usuario = new Usuario();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,6 @@ public class AddUsuarioActivity extends AppCompatActivity {
         btnAddUsuario = (Button) findViewById(R.id.addUsuario);
         txtTelefono = (EditText) findViewById(R.id.usuarioTelefono);
         spGrupos = (Spinner) findViewById(R.id.spinnerGrupos);
-        final Usuario usuario = new Usuario();
 
         fetchGrupos();
 
@@ -49,10 +49,9 @@ public class AddUsuarioActivity extends AppCompatActivity {
     private void valoresSpinner(ArrayList<String> listaGrupos) {
 
         // Asignamos los valores al Spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listaGrupos);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaGrupos);
         spGrupos.setAdapter(adapter);
 
-        final Usuario usuario = new Usuario();
 
         // Cuando pulsemos el botón, vamos a añadir al usuario al grupo
         btnAddUsuario.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +141,7 @@ public class AddUsuarioActivity extends AppCompatActivity {
 
     private void fetchGrupos() {
 
-        mDatabase.child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

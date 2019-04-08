@@ -12,7 +12,7 @@ import com.project.juan_.jpc_locator.Entidades.Usuario;
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private Button btnSignOut, btnMaps, btnAddGroup, btnAddUsuario;
+    private Button btnSignOut, btnMaps, btnAddGroup, btnAddUsuario, btnDeleteGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignOut = (Button) findViewById(R.id.signOut);
         btnMaps = (Button) findViewById(R.id.maps);
         btnAddGroup = (Button) findViewById(R.id.addGroupMain);
+        btnDeleteGroup = (Button) findViewById(R.id.deleteGroupMain);
         btnAddUsuario = (Button) findViewById(R.id.addUsuarioMain);
 
         btnSignOut.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Con este botón vamos a ir al AddGroupActivity
                 startActivity(new Intent(MainActivity.this, AddGroupActivity.class));
+            }
+        });
+
+        btnDeleteGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Con este botón vamos a ir al AddGroupActivity
+                startActivity(new Intent(MainActivity.this, DeleteGroupActivity.class));
             }
         });
 

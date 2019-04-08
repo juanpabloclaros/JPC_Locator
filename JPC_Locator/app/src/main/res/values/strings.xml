@@ -10,6 +10,7 @@
     <string name="nombreGrupo">Nombre del grupo</string>
     <string name="agregar">Añadir</string>
     <string name="enviar">Enviar</string>
+    <string name="borrar">Borrar</string>
     <string name="olvidarPassword">Olvidé la contraseña</string>
     <string name="title_activity_maps">Map</string>
 </resources>
