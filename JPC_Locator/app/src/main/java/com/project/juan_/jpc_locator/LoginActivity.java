@@ -18,6 +18,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
+import com.project.juan_.jpc_locator.Navigation.MainNavigationActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -129,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // Nos manda a la otra acitividad
     private void nextActivity(){
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        startActivity(new Intent(LoginActivity.this, MainNavigationActivity.class));
 
         // Cada vez que mandamos a otra actividad, la actividad de login la eliminamos para que no se quede en segundo plano
         finish();

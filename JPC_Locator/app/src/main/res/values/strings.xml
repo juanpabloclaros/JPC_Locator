@@ -13,4 +13,17 @@
     <string name="borrar">Borrar</string>
     <string name="olvidarPassword">Olvidé la contraseña</string>
     <string name="title_activity_maps">Map</string>
+    <string name="navigation_drawer_open">Abrir barra de navegación</string>
+    <string name="navigation_drawer_close">Cerrar barra de navegación</string>
+    <string name="nav_header_title">JPC</string>
+    <string name="nav_header_subtitle">Locator</string>
+    <string name="nav_header_desc">JPC Locator</string>
+    <string name="action_settings">Cerrar sesión</string>
+
+    <string name="menu_home">Inicio</string>
+    <string name="menu_add_group">Crear grupo</string>
+    <string name="menu_delete_group">Borrar grupo</string>
+    <string name="menu_add_usuario">Añadir usuario a grupo</string>
+
+    <string name="title_activity_main_navigation">JPC Locator</string>
 </resources>
