@@ -11,6 +11,7 @@
     <string name="agregar">Añadir</string>
     <string name="enviar">Enviar</string>
     <string name="borrar">Borrar</string>
+    <string name="dejarGrupo">Salir del grupo</string>
     <string name="olvidarPassword">Olvidé la contraseña</string>
     <string name="title_activity_maps">Map</string>
     <string name="navigation_drawer_open">Abrir barra de navegación</string>
@@ -24,6 +25,10 @@
     <string name="menu_add_group">Crear grupo</string>
     <string name="menu_delete_group">Borrar grupo</string>
     <string name="menu_add_usuario">Añadir usuario a grupo</string>
+    <string name="menu_leave_group">Salir del grupo</string>
 
     <string name="title_activity_main_navigation">JPC Locator</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

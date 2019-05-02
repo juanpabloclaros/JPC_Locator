@@ -80,7 +80,6 @@ public class MainNavigationActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -100,6 +99,9 @@ public class MainNavigationActivity extends AppCompatActivity
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_add_usuario) {
             miFragment = new AddUsuarioFragment();
+            fragmentSeleccionado = true;
+        } else if (id == R.id.nav_leave_group) {
+            miFragment = new LeaveGroupFragment();
             fragmentSeleccionado = true;
         }
 

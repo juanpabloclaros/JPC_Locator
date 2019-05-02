@@ -2,6 +2,7 @@ package com.project.juan_.jpc_locator.Navigation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,9 +29,9 @@ import com.project.juan_.jpc_locator.R;
 import java.util.ArrayList;
 
 
-public class DeleteGroupFragment extends Fragment {
+public class LeaveGroupFragment extends Fragment {
 
-    private Button btnBorrarGrupo;
+    private Button btnDejarGrupo;
     private Spinner spGrupos;
 
     // Creamos una referencia a la base de datos
@@ -39,7 +40,7 @@ public class DeleteGroupFragment extends Fragment {
     private ProgressDialog pd;
     final Usuario usuario = new Usuario();
 
-    public DeleteGroupFragment() {
+    public LeaveGroupFragment() {
         // Required empty public constructor
     }
 
@@ -52,10 +53,10 @@ public class DeleteGroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_delete_group, container, false);
+        View v = inflater.inflate(R.layout.fragment_leave_group, container, false);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        btnBorrarGrupo = (Button) v.findViewById(R.id.deleteGroup);
+        btnDejarGrupo = (Button) v.findViewById(R.id.leaveGroup);
         spGrupos = (Spinner) v.findViewById(R.id.spinnerGrupos);
 
         return v;
@@ -69,7 +70,7 @@ public class DeleteGroupFragment extends Fragment {
     }
 
     private void fetchGrupos() {
-        mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -80,12 +81,11 @@ public class DeleteGroupFragment extends Fragment {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
                     // Añadimos los grupos que tenemos creados
-                    grupos.add(snapshot.getKey());
+                    grupos.add(String.valueOf(snapshot.getValue()));
 
                 }
 
                 valoresSpinner(grupos);
-
             }
 
             @Override
@@ -101,11 +101,11 @@ public class DeleteGroupFragment extends Fragment {
         spGrupos.setAdapter(adapter);
 
         // Cuando pulsemos el botón, vamos a borrar el grupo de las distintas ramas donde aparece
-        btnBorrarGrupo.setOnClickListener(new View.OnClickListener() {
+        btnDejarGrupo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                pd = ProgressDialog.show(getContext(),"Borrar grupo","Borrando grupo...");
+                pd = ProgressDialog.show(getContext(),"Salir del grupo","Saliendo del grupo...");
 
                 mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -127,13 +127,14 @@ public class DeleteGroupFragment extends Fragment {
                 mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(spGrupos.getSelectedItem().toString()).removeValue();
 
                 pd.dismiss();
+
                 Toast.makeText(getContext(), "Se ha borrado correctamente.", Toast.LENGTH_SHORT).show();
 
                 recargar();
 
             }
-        });
 
+        });
 
     }
 

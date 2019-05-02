@@ -38,46 +38,13 @@ public class AddGroupFragment extends Fragment {
     private String grupo;
     private boolean creado = false;
 
-//    // TODO: Rename parameter arguments, choose names that match
-//    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//    private static final String ARG_PARAM1 = "param1";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    // TODO: Rename and change types of parameters
-//    private String mParam1;
-//    private String mParam2;
-
-//    private OnFragmentInteractionListener mListener;
-
     public AddGroupFragment() {
         // Required empty public constructor
     }
 
-//    /**
-//     * Use this factory method to create a new instance of
-//     * this fragment using the provided parameters.
-//     *
-//     * @param param1 Parameter 1.
-//     * @param param2 Parameter 2.
-//     * @return A new instance of fragment AddGroupFragment.
-//     */
-//    // TODO: Rename and change types and number of parameters
-//    public static AddGroupFragment newInstance(String param1, String param2) {
-//        AddGroupFragment fragment = new AddGroupFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
@@ -113,17 +80,17 @@ public class AddGroupFragment extends Fragment {
                         grupo = txtGroup.getText().toString().replace(" ","");
 
                         // Si no existe el hijo Grupos, es porque no hay ninguno, por lo que la primera vez añade el grupo si o si. Si esta creado, realizamos el codigo que hay dentro
-                        if (snapshot.hasChild("Grupos")) {
+                        if (snapshot.hasChild("Usuarios_por_grupo")) {
 
                             // Vamos a recorrer los hijos que hay en Grupos para obtener el valor, y comprobar si el grupo que estamos introduciendo ya está añadido.
                             // Si está añadido, saltará un Toast informando de lo que ocurre, sino, añadira el grupo.
-                            mDatabase.child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
+                            mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     creado = false;
 
                                     for(DataSnapshot data: dataSnapshot.getChildren()){
-                                        if (data.getValue().equals(grupo)) {
+                                        if (grupo.equals(data.getKey())) {
                                             creado = true;
                                         }
                                     }
@@ -136,9 +103,8 @@ public class AddGroupFragment extends Fragment {
                                         Toast.makeText(getContext(), "Se ha creado correctamente.", Toast.LENGTH_SHORT).show();
                                         // Cuando creo el grupo, lo añado a los grupos que hay, al nodo Grupos que hay dentro del usuario que lo creo para indicar que pertenece a el,
                                         // y al nodo Usuarios_por_grupo para tenerlo ya en ese grupo a la hora de buscar a todos los usuarios que pertenezcan a él
-                                        mDatabase.child("Grupos").push().setValue(grupo);
                                         mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").push().setValue(grupo);
-                                        mDatabase.child("Usuarios_por_grupo").child(grupo).push().setValue(usuario.getUsuario());
+                                        mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(grupo).push().setValue(usuario.getUsuario());
                                         txtGroup.setText("");
                                     }
                                 }
@@ -149,9 +115,8 @@ public class AddGroupFragment extends Fragment {
                         }else{
                             pd.dismiss();
                             Toast.makeText(getContext(), "Se ha creado correctamente.", Toast.LENGTH_SHORT).show();
-                            mDatabase.child("Grupos").push().setValue(grupo);
                             mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").push().setValue(grupo);
-                            mDatabase.child("Usuarios_por_grupo").child(grupo).push().setValue(usuario.getUsuario());
+                            mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(grupo).push().setValue(usuario.getUsuario());
                             txtGroup.setText("");
                         }
                     }
@@ -163,42 +128,13 @@ public class AddGroupFragment extends Fragment {
         });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
     }
-
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }
