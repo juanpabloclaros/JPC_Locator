@@ -102,7 +102,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         subirLatLongFirebase();
     }
 
-    private void obtenerLatLong() {
+    private void obtenerLatLong(final Location location) {
         // Con addValueEventListener() lo que va a hacer es que cada vez qeu cambien los valores de coordenadas, se va a lanzar ese método
         mDatabase.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -116,18 +116,25 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 // Con este for recorremos los hijos del nodo
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
-                    if(!snapshot.getKey().equals(usuario.getUsuario())){
-                        // Con esto cogemos los valores que tenemos en la clase MapsData
-                        MapsPojo mp = snapshot.child("posición").getValue(MapsPojo.class);
+                    // Con esto cogemos los valores que tenemos en la clase MapsData
+                    MapsPojo mp = snapshot.child("posición").getValue(MapsPojo.class);
 
-                        // Cogemos cada uno de los valores
-                        Double Latitud = mp.getLatitud();
-                        Double Longitud = mp.getLongitud();
+                    // Cogemos cada uno de los valores
+                    Double Latitud = mp.getLatitud();
+                    Double Longitud = mp.getLongitud();
+
+                    // Aqui calculamos la distancia entre la posicion actual del usuario con la de los demás
+                    float[] results = new float[1];
+                    Location.distanceBetween(location.getLatitude(), location.getLongitude(),
+                            Latitud, Longitud, results);
+
+                    if(!snapshot.getKey().equals(usuario.getUsuario()) && results[0] < 500.0){
 
                         // Creamos un markerOptions que es donde vamos a poner los puntos en el mapa
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.position(new LatLng(Latitud,Longitud));
                         markerOptions.title(snapshot.getValue(Usuario.class).getNombre());
+                        markerOptions.snippet("Distancia: " + results[0] + " mts");
 
                         // Usamos los ArrayList para ir actualizando los markers
                         tmpRealTimeMarkers.add(mMap.addMarker(markerOptions));
@@ -170,7 +177,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             coord.put("Longitud",location.getLongitude());
                             mDatabase.child("Usuarios").child(usuario.getUsuario()).child("posición").setValue(coord);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),17));
-                            obtenerLatLong();
+                            obtenerLatLong(location);
                         }
                     }
                 });
@@ -183,7 +190,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     coord.put("Latitud",location.getLatitude());
                     coord.put("Longitud",location.getLongitude());
                     mDatabase.child("Usuarios").child(usuario.getUsuario()).child("posición").setValue(coord);
-                    obtenerLatLong();
+                    obtenerLatLong(location);
                 }
             }
 
