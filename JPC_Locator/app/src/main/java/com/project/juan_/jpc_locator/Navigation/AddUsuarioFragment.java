@@ -137,7 +137,7 @@ public class AddUsuarioFragment extends Fragment {
                                     }else {
                                         Toast.makeText(getContext(), "Se ha añadido correctamente.", Toast.LENGTH_SHORT).show();
                                         mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(spGrupos.getSelectedItem().toString()).push().setValue(key);
-                                        mDatabase.child("Usuarios").child(key).child("Grupos").push().setValue(spGrupos.getSelectedItem().toString());
+//                                        mDatabase.child("Usuarios").child(key).child("Grupos").push().setValue(spGrupos.getSelectedItem().toString());
                                         txtTelefono.setText("");
                                     }
                                 }
