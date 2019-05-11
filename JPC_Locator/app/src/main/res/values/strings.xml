@@ -26,6 +26,7 @@
     <string name="menu_delete_group">Borrar grupo</string>
     <string name="menu_add_usuario">Añadir usuario a grupo</string>
     <string name="menu_leave_group">Salir del grupo</string>
+    <string name="menu_chat">Chat</string>
 
     <string name="title_activity_main_navigation">JPC Locator</string>
 

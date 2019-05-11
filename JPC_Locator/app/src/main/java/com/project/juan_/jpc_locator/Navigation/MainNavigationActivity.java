@@ -91,6 +91,9 @@ public class MainNavigationActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             miFragment = new MapsFragment();
             fragmentSeleccionado = true;
+        } else if (id == R.id.nav_chat) {
+            miFragment = new GroupsFragment();
+            fragmentSeleccionado = true;
         } else if (id == R.id.nav_add_group) {
             miFragment = new AddGroupFragment();
             fragmentSeleccionado = true;
