@@ -45,6 +45,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationManager mLocationManager;
     final Usuario usuario = new Usuario();
+    private String tokenEmisor;
 
     // Creamos una referencia a la base de datos
     private DatabaseReference mDatabase;
@@ -113,6 +114,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     marker.remove();
                 }
 
+                tokenEmisor = dataSnapshot.child(usuario.getUsuario()).getValue(Usuario.class).getToken();
                 // Con este for recorremos los hijos del nodo
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
@@ -135,6 +137,14 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                         markerOptions.position(new LatLng(Latitud,Longitud));
                         markerOptions.title(snapshot.getValue(Usuario.class).getNombre());
                         markerOptions.snippet("Distancia: " + results[0] + " mts");
+
+                        Map<String,Object> valores = new HashMap<>();
+                        valores.put("nombre",snapshot.getValue(Usuario.class).getNombre());
+                        valores.put("distancia",results[0]);
+                        valores.put("tokenEmisor",tokenEmisor);
+                        valores.put("tokenReceptor",snapshot.getValue(Usuario.class).getToken());
+                        mDatabase.child("Notifications").child("Cerca").child(usuario.getUsuario()).child(snapshot.getKey()).setValue(valores);
+
 
                         // Usamos los ArrayList para ir actualizando los markers
                         tmpRealTimeMarkers.add(mMap.addMarker(markerOptions));

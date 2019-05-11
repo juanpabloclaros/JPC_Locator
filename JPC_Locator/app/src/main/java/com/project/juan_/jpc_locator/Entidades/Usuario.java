@@ -4,6 +4,7 @@ package com.project.juan_.jpc_locator.Entidades;
 public class Usuario {
     private String nombre;
     private String email;
+    private String token;
     private int numero;
     private static String usuario;
 
@@ -31,6 +32,14 @@ public class Usuario {
 
     public void setNumero(int numero) {
         this.numero = numero;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 

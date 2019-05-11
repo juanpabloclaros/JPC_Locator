@@ -24,6 +24,8 @@ import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddUsuarioFragment extends Fragment {
 
@@ -33,7 +35,7 @@ public class AddUsuarioFragment extends Fragment {
     private Spinner spGrupos;
     private ProgressDialog pd;
     private boolean encontrado = false;
-    private String key;
+    private String key,nombreEmisor,nombreReceptor,tokenEmisor,tokenReceptor;
     final Usuario usuario = new Usuario();
 
     public AddUsuarioFragment() {
@@ -114,6 +116,8 @@ public class AddUsuarioFragment extends Fragment {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                                    nombreEmisor = dataSnapshot.child(usuario.getUsuario()).getValue(Usuario.class).getNombre();
+                                    tokenEmisor = dataSnapshot.child(usuario.getUsuario()).getValue(Usuario.class).getToken();
                                     // Con este for recorremos los hijos del nodo
                                     for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
@@ -121,7 +125,9 @@ public class AddUsuarioFragment extends Fragment {
                                         if(Integer.toString(snapshot.getValue(Usuario.class).getNumero()).equals(txtTelefono.getText().toString())){
 
                                             key = snapshot.getKey();
-                                            for(DataSnapshot data: dataSnapshot.child(snapshot.getKey()).child("Usuarios_por_grupo").child(usuario.getUsuario()).getChildren()){
+                                            nombreReceptor = snapshot.getValue(Usuario.class).getNombre();
+                                            tokenReceptor = snapshot.getValue(Usuario.class).getToken();
+                                            for(DataSnapshot data: dataSnapshot.child("Usuarios_por_grupo").child(key).getChildren()){
 
                                                 // Buscamos si el grupo seleccionado esta dentro de los grupos a los que pertenece el usuario
                                                 if(spGrupos.getSelectedItem().toString().equals(data.getKey())){
@@ -138,6 +144,16 @@ public class AddUsuarioFragment extends Fragment {
                                         Toast.makeText(getContext(), "Se ha añadido correctamente.", Toast.LENGTH_SHORT).show();
                                         mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(spGrupos.getSelectedItem().toString()).push().setValue(key);
 //                                        mDatabase.child("Usuarios").child(key).child("Grupos").push().setValue(spGrupos.getSelectedItem().toString());
+
+                                        Map<String,Object> valores = new HashMap<>();
+                                        valores.put("nombreEmisor",nombreEmisor);
+                                        valores.put("nombreReceptor",nombreReceptor);
+                                        valores.put("tokenEmisor",tokenEmisor);
+                                        valores.put("tokenReceptor",tokenReceptor);
+                                        valores.put("recibido","false");
+                                        valores.put("unirse","false");
+                                        valores.put("grupo",spGrupos.getSelectedItem().toString());
+                                        mDatabase.child("Notifications").child("Grupo").child(usuario.getUsuario()).child(key).setValue(valores);
                                         txtTelefono.setText("");
                                     }
                                 }

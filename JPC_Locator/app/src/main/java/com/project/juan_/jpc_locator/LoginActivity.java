@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.Navigation.MainNavigationActivity;
 
@@ -65,6 +69,21 @@ public class LoginActivity extends AppCompatActivity {
                                             Toast.makeText(LoginActivity.this,"Ha iniciado sesión correctamente.", Toast.LENGTH_SHORT).show();
                                             Usuario usuario = new Usuario();
                                             usuario.setUsuario(mAuth.getUid());
+                                            FirebaseInstanceId.getInstance().getInstanceId()
+                                                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                            if (!task.isSuccessful()) {
+                                                                Log.w("Aviso", "getInstanceId failed", task.getException());
+                                                                return;
+                                                            }
+
+                                                            // Get new Instance ID token
+                                                            String token = task.getResult().getToken();
+
+                                                            FirebaseDatabase.getInstance().getReference().child("Usuarios").child(mAuth.getUid()).child("token").setValue(token);
+                                                        }
+                                                    });
                                             nextActivity();
                                         }else{
                                             Toast.makeText(LoginActivity.this, "Por favor, verifique su correo electrónico.", Toast.LENGTH_SHORT).show();
@@ -124,6 +143,22 @@ public class LoginActivity extends AppCompatActivity {
         if(currentUser != null && currentUser.isEmailVerified()){
             Usuario usuario = new Usuario();
             usuario.setUsuario(currentUser.getUid());
+            FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            if (!task.isSuccessful()) {
+                                Log.w("Aviso", "getInstanceId failed", task.getException());
+                                return;
+                            }
+
+                            // Get new Instance ID token
+                            String token = task.getResult().getToken();
+                            Log.w("Aviso", token);
+
+                            FirebaseDatabase.getInstance().getReference().child("Usuarios").child(mAuth.getUid()).child("token").setValue(token);
+                        }
+                    });
             nextActivity();
         }
     }
