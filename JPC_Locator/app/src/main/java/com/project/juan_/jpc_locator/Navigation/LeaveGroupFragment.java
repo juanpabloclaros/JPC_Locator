@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -111,9 +112,42 @@ public class LeaveGroupFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+
                             // Buscamos si el grupo seleccionado esta dentro de los grupos a los que pertenece el usuario
                             if(spGrupos.getSelectedItem().toString().equals(snapshot.getValue())){
+
+                                //Borramos el grupo de aquellos a los que pertenece el usuario
                                 snapshot.getRef().removeValue();
+
+                                //Borramos al usuario dentro del nodo Usuarios_por_grupo para ya no tenerlo disponible ni en el mapa ni en el chat
+                                mDatabase.child("Usuarios_por_grupo").child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot data: dataSnapshot.getChildren())
+                                            if(usuario.getUsuario().equals(data.getValue()))
+                                                data.getRef().removeValue();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                                // Borramos el grupo dentro del nodo de aquellos que ha creado el usuario por si acaso ese grupo lo haya creado
+                                mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos_creados").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot data: dataSnapshot.getChildren())
+                                            if(spGrupos.getSelectedItem().toString().equals(data.getValue()))
+                                                data.getRef().removeValue();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
                             }
                         }
                     }
@@ -124,11 +158,9 @@ public class LeaveGroupFragment extends Fragment {
                     }
                 });
 
-                mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(spGrupos.getSelectedItem().toString()).removeValue();
-
                 pd.dismiss();
 
-                Toast.makeText(getContext(), "Se ha borrado correctamente.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ha salido del grupo " + spGrupos.getSelectedItem().toString() + ".", Toast.LENGTH_SHORT).show();
 
                 recargar();
 

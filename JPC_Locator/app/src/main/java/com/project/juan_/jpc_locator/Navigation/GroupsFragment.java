@@ -69,7 +69,7 @@ public class GroupsFragment extends Fragment {
     }
 
     private void mostrarGrupos() {
-        mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos_creados").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Set<String> set = new HashSet<>();
@@ -78,7 +78,7 @@ public class GroupsFragment extends Fragment {
                 Iterator iterator = dataSnapshot.getChildren().iterator();
 
                 while (iterator.hasNext()){
-                    set.add(((DataSnapshot)iterator.next()).getKey());
+                    set.add(((DataSnapshot)iterator.next()).getValue().toString());
                 }
 
                 listGroups.clear();

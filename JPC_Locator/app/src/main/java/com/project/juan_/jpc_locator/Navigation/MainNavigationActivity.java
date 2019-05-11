@@ -97,9 +97,6 @@ public class MainNavigationActivity extends AppCompatActivity
         } else if (id == R.id.nav_add_group) {
             miFragment = new AddGroupFragment();
             fragmentSeleccionado = true;
-        } else if (id == R.id.nav_delete_group) {
-            miFragment = new DeleteGroupFragment();
-            fragmentSeleccionado = true;
         } else if (id == R.id.nav_add_usuario) {
             miFragment = new AddUsuarioFragment();
             fragmentSeleccionado = true;
