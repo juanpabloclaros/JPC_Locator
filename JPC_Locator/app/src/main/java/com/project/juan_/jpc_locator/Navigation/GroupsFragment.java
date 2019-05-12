@@ -1,6 +1,7 @@
 package com.project.juan_.jpc_locator.Navigation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -17,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
+import com.project.juan_.jpc_locator.GroupChatActivity;
 import com.project.juan_.jpc_locator.R;
 
 import java.util.ArrayList;
@@ -55,6 +58,18 @@ public class GroupsFragment extends Fragment {
         inicializacion();
 
         mostrarGrupos();
+
+        // Con esto vamos a ir al chat de cada grupo
+        list_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String nombreGrupo = parent.getItemAtPosition(position).toString();
+
+                Intent groupChatIntent = new Intent(getContext(), GroupChatActivity.class);
+                groupChatIntent.putExtra("groupName",nombreGrupo);
+                startActivity(groupChatIntent);
+            }
+        });
 
         return groupFragmentView;
     }

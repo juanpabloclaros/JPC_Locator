@@ -28,7 +28,6 @@ public class MainNavigationActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,21 +86,27 @@ public class MainNavigationActivity extends AppCompatActivity
 
         Fragment miFragment = null;
         boolean fragmentSeleccionado = false;
+        String titulo = null;
 
         if (id == R.id.nav_home) {
             miFragment = new MapsFragment();
+            getSupportActionBar().setTitle("Inicio");
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_chat) {
             miFragment = new GroupsFragment();
+            getSupportActionBar().setTitle("Grupos");
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_add_group) {
             miFragment = new AddGroupFragment();
+            getSupportActionBar().setTitle("Crear Grupo");
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_add_usuario) {
             miFragment = new AddUsuarioFragment();
+            getSupportActionBar().setTitle("Añadir Usuario");
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_leave_group) {
             miFragment = new LeaveGroupFragment();
+            getSupportActionBar().setTitle("Dejar Grupo");
             fragmentSeleccionado = true;
         }
 
