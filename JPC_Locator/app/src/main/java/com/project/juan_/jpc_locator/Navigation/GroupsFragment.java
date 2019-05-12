@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.project.juan_.jpc_locator.GroupChatActivity;
 import com.project.juan_.jpc_locator.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -33,6 +35,7 @@ public class GroupsFragment extends Fragment {
     private ListView list_view;
     private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> listGroups = new ArrayList<>();
+    private ArrayList<String> claves = new ArrayList<>();
     private Usuario usuario = new Usuario();
 
     private DatabaseReference mDatabase;
@@ -67,6 +70,7 @@ public class GroupsFragment extends Fragment {
 
                 Intent groupChatIntent = new Intent(getContext(), GroupChatActivity.class);
                 groupChatIntent.putExtra("groupName",nombreGrupo);
+                groupChatIntent.putExtra("clave",claves.get(position));
                 startActivity(groupChatIntent);
             }
         });
@@ -84,7 +88,7 @@ public class GroupsFragment extends Fragment {
     }
 
     private void mostrarGrupos() {
-        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos_creados").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Set<String> set = new HashSet<>();
@@ -95,6 +99,11 @@ public class GroupsFragment extends Fragment {
                 while (iterator.hasNext()){
                     set.add(((DataSnapshot)iterator.next()).getValue().toString());
                 }
+
+                for (DataSnapshot data: dataSnapshot.getChildren())
+                    claves.add(data.getKey());
+
+                Collections.reverse(claves);
 
                 listGroups.clear();
                 listGroups.addAll(set);
