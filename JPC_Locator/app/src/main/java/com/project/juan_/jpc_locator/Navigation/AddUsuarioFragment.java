@@ -103,6 +103,7 @@ public class AddUsuarioFragment extends Fragment {
 
                 encontrado = false;
                 pd = ProgressDialog.show(getContext(),"Añadir amigo","Añadiendo amigo al grupo...");
+                obtenerClave(spGrupos.getSelectedItem().toString());
 
                 mDatabase.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -123,7 +124,6 @@ public class AddUsuarioFragment extends Fragment {
                                 key = misnapshot.getKey();
                                 nombreReceptor = misnapshot.getValue(Usuario.class).getNombre();
                                 tokenReceptor = misnapshot.getValue(Usuario.class).getToken();
-                                obtenerClave(spGrupos.getSelectedItem().toString());
 
                                 // Iniciamos la comprobacion
                                 for(DataSnapshot data: misnapshot.child("Grupos").getChildren()){
@@ -141,8 +141,8 @@ public class AddUsuarioFragment extends Fragment {
                             Toast.makeText(getContext(), "El número ya está añadido al grupo.", Toast.LENGTH_SHORT).show();
                         }else {
                             Toast.makeText(getContext(), "Se ha añadido correctamente.", Toast.LENGTH_SHORT).show();
-                            mDatabase.child("Usuarios_por_grupo").child(usuario.getUsuario()).child(spGrupos.getSelectedItem().toString()).push().setValue(key);
-//                                        mDatabase.child("Usuarios").child(key).child("Grupos").push().setValue(spGrupos.getSelectedItem().toString());
+                            mDatabase.child("Usuarios_por_grupo").child(grupoID).push().setValue(key);
+                            mDatabase.child("Usuarios").child(key).child("Grupos").child(grupoID).setValue(spGrupos.getSelectedItem().toString());
 
                             Map<String,Object> valores = new HashMap<>();
                             valores.put("nombreEmisor",nombreEmisor);

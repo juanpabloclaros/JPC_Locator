@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,20 +26,24 @@ import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class GroupChatActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private ImageButton enviarMensajebtn;
     private EditText entradaMensajeTxt;
-    private ScrollView mScrollView;
-    private TextView mostrarMensajeView;
     private Usuario usuario = new Usuario();
+    private final List<Mensajes> listaMensajes = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager;
+    private MensajesAdapter mensajesAdapter;
+    private RecyclerView listaMensajeUsuario;
 
-    private String nombreGrupo,claveGrupo, nombreUsuario, fechaActual, tiempoActual;
+    private String nombreGrupo,claveGrupo, nombreUsuario, fechaActual, tiempoActual, from;
 
     private DatabaseReference mDatabase;
 
@@ -54,9 +60,13 @@ public class GroupChatActivity extends AppCompatActivity {
 
         enviarMensajebtn = (ImageButton) findViewById(R.id.imageButtonId);
         entradaMensajeTxt = (EditText) findViewById(R.id.inputGroupMessage);
-        mostrarMensajeView = (TextView) findViewById(R.id.group_chat_textView);
-        mScrollView = (ScrollView) findViewById(R.id.scrollViewId);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mensajesAdapter = new MensajesAdapter(listaMensajes);
+        listaMensajeUsuario = (RecyclerView) findViewById(R.id.listaMensajesPrivadoUsuario);
+        linearLayoutManager = new LinearLayoutManager(this);
+        listaMensajeUsuario.setLayoutManager(linearLayoutManager);
+        listaMensajeUsuario.setAdapter(mensajesAdapter);
 
         informacionUsuario();
 
@@ -67,7 +77,6 @@ public class GroupChatActivity extends AppCompatActivity {
 
                 entradaMensajeTxt.setText("");
 
-                mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
     }
@@ -79,16 +88,15 @@ public class GroupChatActivity extends AppCompatActivity {
         mDatabase.child("Chat").child(claveGrupo).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.exists()){
-                    mostrarMensajes(dataSnapshot);
-                }
+                Mensajes mensajes = dataSnapshot.getValue(Mensajes.class);
+
+                listaMensajes.add(mensajes);
+
+                mensajesAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onChildChanged( DataSnapshot dataSnapshot,  String s) {
-                if(dataSnapshot.exists()){
-                    mostrarMensajes(dataSnapshot);
-                }
             }
 
             @Override
@@ -127,6 +135,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private void guardarMensaje() {
         String mensaje = entradaMensajeTxt.getText().toString();
         String mensajeKey = mDatabase.child("Chat").child(claveGrupo).push().getKey();
+        from = usuario.getUsuario();
 
         if (TextUtils.isEmpty(mensaje)){
             Toast.makeText(this, "Por favor escriba un mensaje primero...", Toast.LENGTH_SHORT).show();
@@ -147,30 +156,9 @@ public class GroupChatActivity extends AppCompatActivity {
             infoMensajeMap.put("mensaje",mensaje);
             infoMensajeMap.put("fecha",fechaActual);
             infoMensajeMap.put("hora",tiempoActual);
+            infoMensajeMap.put("from",from);
 
             mDatabase.child("Chat").child(claveGrupo).child(mensajeKey).updateChildren(infoMensajeMap);
         }
-    }
-
-    private void mostrarMensajes(DataSnapshot dataSnapshot) {
-
-        Iterator iterator = dataSnapshot.getChildren().iterator();
-
-        while (iterator.hasNext()){
-            String chatFecha = ((DataSnapshot)iterator.next()).getValue().toString();
-            String chatHora = ((DataSnapshot)iterator.next()).getValue().toString();
-            String chatMensaje = ((DataSnapshot)iterator.next()).getValue().toString();
-            String chatNombre = ((DataSnapshot)iterator.next()).getValue().toString();
-
-            Log.d("Fecha", chatFecha);
-            Log.d("Hora", chatHora);
-            Log.d("Nombre", chatNombre);
-            Log.d("Mensaje", chatMensaje);
-
-            mostrarMensajeView.append(chatNombre + "\n" + chatMensaje + "\n" + chatHora + "   " + chatFecha + "\n\n\n");
-
-            mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
-        }
-
     }
 }

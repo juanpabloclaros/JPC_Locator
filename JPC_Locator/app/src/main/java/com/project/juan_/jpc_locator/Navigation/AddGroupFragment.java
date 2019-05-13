@@ -99,16 +99,17 @@ public class AddGroupFragment extends Fragment {
                                         Toast.makeText(getContext(), "Se ha creado correctamente.", Toast.LENGTH_SHORT).show();
 
                                         // Añadimos el grupo dentro del nodo del usuario y una vez se complete la tarea, lo añadimos a Usuarios_por_grupo con el usuario ya dentro
-                                        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").push().setValue(grupo)
+                                        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos_creados").push().setValue(grupo)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos_creados").addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                         for (DataSnapshot miSnapshot: dataSnapshot.getChildren()){
                                                             if(grupo.equals(miSnapshot.getValue())){
                                                                 mDatabase.child("Usuarios_por_grupo").child(miSnapshot.getKey()).push().setValue(usuario.getUsuario());
+                                                                mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").child(miSnapshot.getKey()).setValue(grupo);
                                                             }
                                                         }
                                                     }

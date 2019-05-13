@@ -105,8 +105,9 @@ public class GroupsFragment extends Fragment {
                 for (DataSnapshot data: dataSnapshot.getChildren())
                     claves.add(data.getKey());
 
-                // Hacemos un reverse a las keys ya que el orden en el que se muestran los grupos es el inverso a como se guardan sus keys
-                Collections.reverse(claves);
+                if(claves.size() != 2)
+                    // Hacemos un reverse a las keys ya que el orden en el que se muestran los grupos es el inverso a como se guardan sus keys
+                    Collections.reverse(claves);
 
                 listGroups.clear();
                 listGroups.addAll(set);
