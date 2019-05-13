@@ -96,13 +96,16 @@ public class GroupsFragment extends Fragment {
                 // Vamos a ir iterando entre los diferentes nodos
                 Iterator iterator = dataSnapshot.getChildren().iterator();
 
+                // Guardamos los grupos para mostrarlos en el listView
                 while (iterator.hasNext()){
                     set.add(((DataSnapshot)iterator.next()).getValue().toString());
                 }
 
+                // Guardamos las keys de cada grupo para pasarselo al chat e indicarle a que nodo va a insertar los mensajes
                 for (DataSnapshot data: dataSnapshot.getChildren())
                     claves.add(data.getKey());
 
+                // Hacemos un reverse a las keys ya que el orden en el que se muestran los grupos es el inverso a como se guardan sus keys
                 Collections.reverse(claves);
 
                 listGroups.clear();

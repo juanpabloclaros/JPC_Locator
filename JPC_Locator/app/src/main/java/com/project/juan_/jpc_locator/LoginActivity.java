@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText txtEmail, txtPassword;
     private Button btnLogin, btnRegistro, btnOlvidar;
     private ProgressDialog pd;
+    private Toolbar mToolbar;
 
     // Firebase
     private FirebaseAuth mAuth;
@@ -47,6 +49,10 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = (Button) findViewById(R.id.loginLogin);
         btnRegistro = (Button) findViewById(R.id.loginRegistrar);
         btnOlvidar = (Button) findViewById(R.id.loginOlvidar);
+
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("Iniciar Sesión");
 
         mAuth = FirebaseAuth.getInstance();
 

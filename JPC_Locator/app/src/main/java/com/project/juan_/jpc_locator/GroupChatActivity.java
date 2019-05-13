@@ -48,7 +48,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
         nombreGrupo = getIntent().getExtras().get("groupName").toString();
         claveGrupo = getIntent().getExtras().get("clave").toString();
-        mToolbar = findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.group_chat_bar_layout);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(nombreGrupo);
 
@@ -60,14 +60,14 @@ public class GroupChatActivity extends AppCompatActivity {
 
         informacionUsuario();
 
-        mostrarMensajeView.append("Porque coño no se añade nada!!!!");
-
         enviarMensajebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 guardarMensaje();
 
                 entradaMensajeTxt.setText("");
+
+                mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
     }
@@ -75,8 +75,6 @@ public class GroupChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        mostrarMensajeView.append("Porque coño no se añade nada!!!!");
 
         mDatabase.child("Chat").child(claveGrupo).addChildEventListener(new ChildEventListener() {
             @Override
@@ -169,7 +167,9 @@ public class GroupChatActivity extends AppCompatActivity {
             Log.d("Nombre", chatNombre);
             Log.d("Mensaje", chatMensaje);
 
-            mostrarMensajeView.append(chatNombre + "\n" + chatMensaje + "   " + chatFecha + "   " + chatHora);
+            mostrarMensajeView.append(chatNombre + "\n" + chatMensaje + "\n" + chatHora + "   " + chatFecha + "\n\n\n");
+
+            mScrollView.fullScroll(ScrollView.FOCUS_DOWN);
         }
 
     }
