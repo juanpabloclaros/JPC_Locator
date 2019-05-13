@@ -91,26 +91,16 @@ public class GroupsFragment extends Fragment {
         mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Set<String> set = new HashSet<>();
 
-                // Vamos a ir iterando entre los diferentes nodos
-                Iterator iterator = dataSnapshot.getChildren().iterator();
+                ArrayList<String> lista = new ArrayList<>();
 
-                // Guardamos los grupos para mostrarlos en el listView
-                while (iterator.hasNext()){
-                    set.add(((DataSnapshot)iterator.next()).getValue().toString());
+                for (DataSnapshot data: dataSnapshot.getChildren()){
+                    lista.add(data.getValue().toString());
+                    claves.add(data.getKey());
                 }
 
-                // Guardamos las keys de cada grupo para pasarselo al chat e indicarle a que nodo va a insertar los mensajes
-                for (DataSnapshot data: dataSnapshot.getChildren())
-                    claves.add(data.getKey());
-
-                if(claves.size() != 2)
-                    // Hacemos un reverse a las keys ya que el orden en el que se muestran los grupos es el inverso a como se guardan sus keys
-                    Collections.reverse(claves);
-
                 listGroups.clear();
-                listGroups.addAll(set);
+                listGroups.addAll(lista);
 
                 // Para ver los cambios que ocurra en el listView, usamos esta función
                 arrayAdapter.notifyDataSetChanged();
