@@ -13,15 +13,19 @@ admin.initializeApp(functions.config().firebase);
 exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_id}/{receptor_id}")
 	.onWrite((data,context) => {
 
-        const usuarioEmisor = context.params.receiver_user_id;
-        const usuarioReceptor = context.params.notification_id;
-        const nombreEmisor = data.child('nombreEmisor').val();
-        const nombreReceptor = data.child('nombreReceptor').val();
-        const tokenEmisor = data.child('tokenEmisor').val();
-        const tokenReceptor = data.child('tokenReceptor').val();
-        const nombreGrupo = data.child('nombreGrupo').val();
-        const recibido = data.child('recibido').val();
-        const unirse = data.child('unirse').val();
+        const userData = datasnapshot.after.val();
+        console.log("userData", datasnapshot.after.val());
+
+        //const usuarioEmisor = context.params.receiver_user_id;
+
+        const nombreEmisor = userData.nombreEmisor;
+        const nombreReceptor = userData.nombreReceptor;
+        //const usuarioReceptor = context.params.notification_id;
+        const tokenEmisor = userData.tokenEmisor;
+        const tokenReceptor = userData.tokenReceptor;
+        const nombreGrupo = userData.grupo;
+        const recibido = userData.recibido;
+        const unirse = userData.unirse;
 
         console.log("nombre emisor: ", nombreEmisor);
         console.log("nombre receptor: ", nombreReceptor);
