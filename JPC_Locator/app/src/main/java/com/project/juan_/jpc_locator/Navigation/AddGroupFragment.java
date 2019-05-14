@@ -2,6 +2,7 @@ package com.project.juan_.jpc_locator.Navigation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.R;
+import com.project.juan_.jpc_locator.RequestActivity;
 
 
 public class AddGroupFragment extends Fragment {

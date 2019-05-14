@@ -11,22 +11,26 @@ admin.initializeApp(functions.config().firebase);
 //Esto es una funcion que va a estar escuchando en el nodo 'Notifications'
 //Esto es equivalente al addValueEventListener(...) en android
 exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_id}/{receptor_id}")
-	.onWrite((data,context) => {
+	.onWrite((datasnapshot,context) => {
 
         const userData = datasnapshot.after.val();
         console.log("userData", datasnapshot.after.val());
 
-        //const usuarioEmisor = context.params.receiver_user_id;
+        const usuarioEmisor = context.params.emisor_id;
 
         const nombreEmisor = userData.nombreEmisor;
         const nombreReceptor = userData.nombreReceptor;
-        //const usuarioReceptor = context.params.notification_id;
+        const usuarioReceptor = context.params.receptor_id;
         const tokenEmisor = userData.tokenEmisor;
         const tokenReceptor = userData.tokenReceptor;
         const nombreGrupo = userData.grupo;
-        const recibido = userData.recibido;
-        const unirse = userData.unirse;
+        const grupoID = userData.grupoID;
+        let recibido = userData.recibido;
+        let unirse = userData.unirse;
+        let respuesta = "Mensaje de ejemplo";
 
+        console.log("Usuario emisor uid:", usuarioEmisor);
+        console.log("Usuario receptor uid:", usuarioReceptor);
         console.log("nombre emisor: ", nombreEmisor);
         console.log("nombre receptor: ", nombreReceptor);
         console.log("token emisor: ", tokenEmisor);
@@ -35,49 +39,52 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
         console.log("recibido: ", recibido);
         console.log("Unirse: ", unirse);
 
-        if (recibido) {
-            return tokenReceptor.then(() => {
+        if (recibido == "true") {
 
-                if (unirse) {
-                    const respuesta = `${nombreReceptor} ha aceptado la solicitud`;
-                } else {
-                    const respuesta = `${nombreReceptor} ha rechazado la solicitud`;
+            if (unirse == "true") {
+                respuesta = `${nombreReceptor} ha aceptado la solicitud`;
+            } else {
+                respuesta = `${nombreReceptor} ha rechazado la solicitud`;
+            }
+            //Aqui necesitamos crear un payload taht será enviado hacia el dispositivo.
+            // El payload necesita tener al menos un 'data' o 'notification'.
+            //Este payload sera enviado como un Map<string,string>
+            const payload = {
+                notification: {
+                    id: "0",
+                    title: "Respuesta de peticion",
+                    body: respuesta
                 }
-                //Aqui necesitamos crear un payload taht será enviado hacia el dispositivo.
-                // El payload necesita tener al menos un 'data' o 'notification'.
-                //Este payload sera enviado como un Map<string,string>
-                const payload = {
-                    data: {
-                        id: "0",
-                        titulo: "Respuesta de petición",
-                        body: respuesta
-                    }
-                };
+            };
 
-                //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
-                //Todo esto usando el token del dispositivo al que queremos mandar.
-                return admin.messaging().sendToDevice(tokenEmisor, payload)
-                    .then(function (response) {
-                        console.log("El mensaje se ha enviado: ", response);
-                    })
-                    .catch(function (error) {
-                        console.log("Error enviando el mensaje: ", error);
-                    });
-            });
-        }
+            //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
+            //Todo esto usando el token del dispositivo al que queremos mandar.
+            return admin.messaging().sendToDevice(tokenEmisor, payload)
+                .then(function (response) {
+                    console.log("El mensaje se ha enviado: ", response);
+                })
+                .catch(function (error) {
+                    console.log("Error enviando el mensaje: ", error);
+                });
+        } else {
 
-        return tokenEmisor.then(() => {
-
-			//Aqui necesitamos crear un payload taht será enviado hacia el dispositivo.
-			// El payload necesita tener al menos un 'data' o 'notification'.
-			//Este payload sera enviado como un Map<string,string>
-			const payload = {
-                data: {
+            //Aqui necesitamos crear un payload taht será enviado hacia el dispositivo.
+            // El payload necesita tener al menos un 'data' o 'notification'.
+            //Este payload sera enviado como un Map<string,string>
+            const payload = {
+                notification: {
                     id: "1",
-					titulo: "Invitación para unirte a grupo",
-                    body: `${nombreEmisor} quiere añadir al grupo ${nombreGrupo}`
-				}
-			};
+                    title: "Invitación para unirte a grupo",
+                    body: `${nombreEmisor} quiere agregarte al grupo ${nombreGrupo}`,
+                    clickAction: "RequestActivity"
+                },
+                data: {
+                    nombre: nombreEmisor,
+                    uid: usuarioEmisor,
+                    grupo: nombreGrupo,
+                    identificador: grupoID
+                }
+            };
 
             //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
             //Todo esto usando el token del dispositivo al que queremos mandar.
@@ -88,5 +95,6 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                 .catch(function (error) {
                     console.log("Error enviando el mensaje: ", error);
                 });
-		});
+
+        }
 	});
