@@ -93,26 +93,21 @@ public class GroupChatActivity extends AppCompatActivity {
                 listaMensajes.add(mensajes);
 
                 mensajesAdapter.notifyDataSetChanged();
+
+                listaMensajeUsuario.smoothScrollToPosition(listaMensajeUsuario.getAdapter().getItemCount());
             }
 
             @Override
-            public void onChildChanged( DataSnapshot dataSnapshot,  String s) {
-            }
+            public void onChildChanged( DataSnapshot dataSnapshot,  String s) { }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) { }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
     }
 

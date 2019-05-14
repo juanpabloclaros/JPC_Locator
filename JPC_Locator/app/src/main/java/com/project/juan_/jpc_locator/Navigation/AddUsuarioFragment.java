@@ -152,6 +152,8 @@ public class AddUsuarioFragment extends Fragment {
                             valores.put("recibido","false");
                             valores.put("unirse","false");
                             valores.put("grupo",spGrupos.getSelectedItem().toString());
+                            valores.put("grupoID",grupoID);
+
                             mDatabase.child("Notifications").child("Grupo").child(usuario.getUsuario()).child(key).setValue(valores);
                             txtTelefono.setText("");
                         }

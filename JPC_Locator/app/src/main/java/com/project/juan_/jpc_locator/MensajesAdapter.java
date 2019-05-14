@@ -54,8 +54,10 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
 
         mensajeViewHolder.mensajeRecibidoText.setVisibility(View.INVISIBLE);
         mensajeViewHolder.horaMensajeRecibido.setVisibility(View.INVISIBLE);
+        mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
 
         if (fromUsuarioId.equals(mensajeEnviadoId)){
+            mensajeViewHolder.mensajeEnviadoText.setVisibility(View.VISIBLE);
             mensajeViewHolder.mensajeEnviadoText.setBackgroundResource(R.drawable.mensajes_enviados);
             mensajeViewHolder.mensajeEnviadoText.setTextColor(Color.BLACK);
             mensajeViewHolder.mensajeEnviadoText.setText(mensajes.getMensaje());
