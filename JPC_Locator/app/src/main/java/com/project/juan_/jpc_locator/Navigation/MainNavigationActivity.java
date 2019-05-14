@@ -16,10 +16,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
@@ -31,6 +33,8 @@ public class MainNavigationActivity extends AppCompatActivity
 
     private TextView titleTV, subtitleTV;
     private Usuario usuario = new Usuario();
+    private DatabaseReference usuarioRef;
+    private Boolean gruposCreados = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,18 @@ public class MainNavigationActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         titleTV = (TextView) headerView.findViewById(R.id.textViewTitle);
         subtitleTV = (TextView) headerView.findViewById(R.id.textViewSubtitle);
+        usuarioRef = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(usuario.getUsuario());
+
+        usuarioRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Grupos_creados"))
+                    gruposCreados = true;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
 
         FirebaseDatabase.getInstance().getReference()
                 .child("Usuarios").child(usuario.getUsuario()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -114,7 +130,6 @@ public class MainNavigationActivity extends AppCompatActivity
 
         Fragment miFragment = null;
         boolean fragmentSeleccionado = false;
-        String titulo = null;
 
         if (id == R.id.nav_home) {
             miFragment = new MapsFragment();
@@ -129,9 +144,14 @@ public class MainNavigationActivity extends AppCompatActivity
             getSupportActionBar().setTitle("Crear Grupo");
             fragmentSeleccionado = true;
         } else if (id == R.id.nav_add_usuario) {
-            miFragment = new AddUsuarioFragment();
-            getSupportActionBar().setTitle("Añadir Usuario");
-            fragmentSeleccionado = true;
+            if (gruposCreados){
+                miFragment = new AddUsuarioFragment();
+                getSupportActionBar().setTitle("Añadir Usuario");
+                fragmentSeleccionado = true;
+            } else{
+                Toast.makeText(this, "No tienes grupos creados.", Toast.LENGTH_SHORT).show();
+            }
+
         } else if (id == R.id.nav_leave_group) {
             miFragment = new LeaveGroupFragment();
             getSupportActionBar().setTitle("Dejar Grupo");

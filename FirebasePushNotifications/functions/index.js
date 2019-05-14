@@ -15,7 +15,7 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
 
         const usuarioEmisor = context.params.receiver_user_id;
         const usuarioReceptor = context.params.notification_id;
-        const nombreEmisor = data.val();
+        const nombreEmisor = data.child('nombreEmisor').val();
         const nombreReceptor = data.child('nombreReceptor').val();
         const tokenEmisor = data.child('tokenEmisor').val();
         const tokenReceptor = data.child('tokenReceptor').val();
@@ -35,9 +35,9 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
             return tokenReceptor.then(() => {
 
                 if (unirse) {
-                    const respuesta = "{nombreReceptor} ha aceptado la solicitud";
+                    const respuesta = `${nombreReceptor} ha aceptado la solicitud`;
                 } else {
-                    const respuesta = "{nombreReceptor} ha rechazado la solicitud";
+                    const respuesta = `${nombreReceptor} ha rechazado la solicitud`;
                 }
                 //Aqui necesitamos crear un payload taht será enviado hacia el dispositivo.
                 // El payload necesita tener al menos un 'data' o 'notification'.
@@ -71,7 +71,7 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                 data: {
                     id: "1",
 					titulo: "Invitación para unirte a grupo",
-					body: "{nombreEmisor} quiere añadir al grupo {nombreGrupo}"
+                    body: `${nombreEmisor} quiere añadir al grupo ${nombreGrupo}`
 				}
 			};
 
