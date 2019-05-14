@@ -17,17 +17,6 @@
         android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/horaMensajeEnviadoTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:textSize="14sp"
-        android:padding="10dp"
-        android:textStyle="bold"
-        android:layout_below="@+id/mensajeEnviadoTV"/>
-
-    <TextView
         android:id="@+id/mensajeRecibidoTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,13 +26,5 @@
         android:padding="10dp"
         android:layout_marginTop="10dp"
         android:textStyle="bold"/>
-    <TextView
-        android:id="@+id/horaMensajeRecibidoTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:padding="10dp"
-        android:textStyle="bold"
-        android:layout_below="@+id/mensajeRecibidoTV"/>
 
 </RelativeLayout>

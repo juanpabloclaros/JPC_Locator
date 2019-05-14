@@ -2,9 +2,11 @@ package com.project.juan_.jpc_locator.Navigation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -12,14 +14,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.LoginActivity;
 import com.project.juan_.jpc_locator.R;
 
 public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private TextView titleTV, subtitleTV;
+    private Usuario usuario = new Usuario();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +46,23 @@ public class MainNavigationActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        View headerView = navigationView.getHeaderView(0);
+        titleTV = (TextView) headerView.findViewById(R.id.textViewTitle);
+        subtitleTV = (TextView) headerView.findViewById(R.id.textViewSubtitle);
+
+        FirebaseDatabase.getInstance().getReference()
+                .child("Usuarios").child(usuario.getUsuario()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                titleTV.setText(dataSnapshot.getValue(Usuario.class).getNombre());
+                subtitleTV.setText(dataSnapshot.getValue(Usuario.class).getEmail());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
+        getSupportActionBar().setTitle("Inicio");
         Fragment fragment = new MapsFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.content_main,fragment).commit();
 

@@ -11,20 +11,20 @@ admin.initializeApp(functions.config().firebase);
 //Esto es una funcion que va a estar escuchando en el nodo 'Notifications'
 //Esto es equivalente al addValueEventListener(...) en android
 exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_id}/{receptor_id}")
-	.onWrite((datasnapshot,context) => {
+	.onWrite((data,context) => {
 
-        //const usuarioEmisor = context.params.receiver_user_id;
-        const nombreEmisor = datasnapshot.val();
-        const nombreReceptor = datasnapshot.child('nombreReceptor').val();
-        //const usuarioReceptor = context.params.notification_id;
-        const tokenEmisor = datasnapshot.child('tokenEmisor').val();
-        const tokenReceptor = datasnapshot.child('tokenReceptor').val();
-        const nombreGrupo = datasnapshot.child('nombreGrupo').val();
-        const recibido = datasnapshot.child('recibido').val();
-        const unirse = datasnapshot.child('unirse').val();
+        const usuarioEmisor = context.params.receiver_user_id;
+        const usuarioReceptor = context.params.notification_id;
+        const nombreEmisor = data.val();
+        const nombreReceptor = data.child('nombreReceptor').val();
+        const tokenEmisor = data.child('tokenEmisor').val();
+        const tokenReceptor = data.child('tokenReceptor').val();
+        const nombreGrupo = data.child('nombreGrupo').val();
+        const recibido = data.child('recibido').val();
+        const unirse = data.child('unirse').val();
 
         console.log("nombre emisor: ", nombreEmisor);
-        console.log("nomobre receptor: ", nombreReceptor);
+        console.log("nombre receptor: ", nombreReceptor);
         console.log("token emisor: ", tokenEmisor);
         console.log("token receptor: ", tokenReceptor);
         console.log("nombre del grupo: ", nombreGrupo);
