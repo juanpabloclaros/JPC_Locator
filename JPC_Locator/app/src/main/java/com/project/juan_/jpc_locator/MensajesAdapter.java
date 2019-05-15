@@ -53,10 +53,12 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
         mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
 
         if (fromUsuarioId.equals(mensajeEnviadoId)){
+
             mensajeViewHolder.mensajeEnviadoText.setVisibility(View.VISIBLE);
+
             mensajeViewHolder.mensajeEnviadoText.setBackgroundResource(R.drawable.mensajes_enviados);
             mensajeViewHolder.mensajeEnviadoText.setTextColor(Color.BLACK);
-            mensajeViewHolder.mensajeEnviadoText.setText(mensajes.getMensaje() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
+            mensajeViewHolder.mensajeEnviadoText.setText(mensajes.getNombre() + "\n\n" + mensajes.getMensaje() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
         } else{
             mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
 
@@ -64,7 +66,7 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
 
             mensajeViewHolder.mensajeRecibidoText.setBackgroundResource(R.drawable.mensajes_recibidos);
             mensajeViewHolder.mensajeRecibidoText.setTextColor(Color.BLACK);
-            mensajeViewHolder.mensajeRecibidoText.setText(mensajes.getMensaje() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
+            mensajeViewHolder.mensajeRecibidoText.setText(mensajes.getNombre() + "\n\n" + mensajes.getMensaje() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
         }
     }
 

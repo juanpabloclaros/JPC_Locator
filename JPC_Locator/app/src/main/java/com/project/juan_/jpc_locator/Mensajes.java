@@ -1,15 +1,16 @@
 package com.project.juan_.jpc_locator;
 
 public class Mensajes {
-    private String from, mensaje, hora, fecha;
+    private String from, mensaje, hora, fecha, nombre;
 
     public Mensajes(){}
 
-    public Mensajes(String from, String mensaje, String hora, String fecha) {
+    public Mensajes(String from, String mensaje, String hora, String fecha, String nombre) {
         this.from = from;
         this.mensaje = mensaje;
         this.hora = hora;
         this.fecha = fecha;
+        this.nombre = nombre;
     }
 
     public String getFrom() {
@@ -40,7 +41,15 @@ public class Mensajes {
         return fecha;
     }
 
-    public void setfecha(String fecha) {
+    public void setFecha(String fecha) {
         this.fecha = fecha;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 }
