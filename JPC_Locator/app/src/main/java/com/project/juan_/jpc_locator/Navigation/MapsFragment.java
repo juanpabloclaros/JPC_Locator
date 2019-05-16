@@ -200,7 +200,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
                     if (listaUsuarios.contains(snapshot.getKey())){
-                        
+
                         // Con esto cogemos los valores que tenemos en la clase MapsData
                         MapsPojo mp = snapshot.child("posición").getValue(MapsPojo.class);
 

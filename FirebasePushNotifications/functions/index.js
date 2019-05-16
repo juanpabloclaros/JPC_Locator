@@ -62,6 +62,7 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
             return admin.messaging().sendToDevice(tokenEmisor, payload)
                 .then(function (response) {
                     console.log("El mensaje se ha enviado: ", response);
+                    // Aqui borramos la rama esa de la notificación
                 })
                 .catch(function (error) {
                     console.log("Error enviando el mensaje: ", error);
@@ -72,17 +73,13 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
             // El payload necesita tener al menos un 'data' o 'notification'.
             //Este payload sera enviado como un Map<string,string>
             const payload = {
-                notification: {
+                data: {
                     id: "1",
                     title: "Invitación para unirte a grupo",
                     body: `${nombreEmisor} quiere agregarte al grupo ${nombreGrupo}`,
-                    clickAction: "RequestActivity"
-                },
-                data: {
                     nombre: nombreEmisor,
-                    uid: usuarioEmisor,
                     grupo: nombreGrupo,
-                    identificador: grupoID
+                    grupoId: grupoID
                 }
             };
 
