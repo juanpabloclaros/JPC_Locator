@@ -118,6 +118,7 @@ public class MainNavigationActivity extends AppCompatActivity
 
             // Cuando cierras sesion, te lleva otra vez al login por si quieres iniciar sesion con otra cuenta
             startActivity(new Intent(MainNavigationActivity.this, LoginActivity.class));
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

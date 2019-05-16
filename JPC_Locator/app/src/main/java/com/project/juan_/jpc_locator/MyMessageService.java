@@ -15,13 +15,24 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 public class MyMessageService extends FirebaseMessagingService {
+    private static final String TAG = "FirebaseMessagingServic";
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        crearNotificationChannel();
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+            String title = remoteMessage.getNotification().getTitle(); //get title
+            String message = remoteMessage.getNotification().getBody(); //get message
+            String click_action = remoteMessage.getNotification().getClickAction(); //get click_action
 
-        mostrarNotificacion(remoteMessage);
+            Log.d(TAG, "Message Notification Title: " + title);
+            Log.d(TAG, "Message Notification Body: " + message);
+            Log.d(TAG, "Message Notification click_action: " + click_action);
+
+//            sendNotification(title, message,click_action);
+        }
     }
 
     private void crearNotificationChannel() {

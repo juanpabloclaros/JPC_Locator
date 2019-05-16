@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null && currentUser.isEmailVerified()){
             Usuario usuario = new Usuario();
             usuario.setUsuario(currentUser.getUid());
@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                             String token = task.getResult().getToken();
                             Log.w("Aviso", token);
 
-                            FirebaseDatabase.getInstance().getReference().child("Usuarios").child(mAuth.getUid()).child("token").setValue(token);
+                            FirebaseDatabase.getInstance().getReference().child("Usuarios").child(currentUser.getUid()).child("token").setValue(token);
                         }
                     });
             nextActivity();
