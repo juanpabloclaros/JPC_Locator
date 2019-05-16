@@ -2,20 +2,15 @@ package com.project.juan_.jpc_locator.Navigation;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -121,12 +115,32 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
         });
 
+        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren())
+                    claves.add(snapshot.getKey());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
+        spGrupos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                obtenerClave(position);
+                crearLista();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
         SupportMapFragment mapFragment = (SupportMapFragment)getChildFragmentManager()
                 .findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
-
-
 
     }
 
@@ -135,7 +149,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         if (!listaUsuarios.isEmpty())
             listaUsuarios.clear();
 
-        mDatabase.child("Usuarios_por_grupo").child(grupoID).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("Usuarios_por_grupo").child(grupoID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -160,7 +174,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
     }
 
     @Override
@@ -173,23 +186,21 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private void obtenerLatLong(final Location location) {
 
-        Log.d("Usuarios", String.valueOf(listaUsuarios));
         // Con addValueEventListener() lo que va a hacer es que cada vez qeu cambien los valores de coordenadas, se va a lanzar ese método
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Usuarios").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 // Primero borramos los marcadores para que no se repitan luego en el array realTimeMarker
                 for (Marker marker:realTimeMarkers){
                     marker.remove();
                 }
 
-                tokenEmisor = dataSnapshot.child("Usuarios").child(usuario.getUsuario()).getValue(Usuario.class).getToken();
+                tokenEmisor = dataSnapshot.child(usuario.getUsuario()).getValue(Usuario.class).getToken();
                 // Con este for recorremos los hijos del nodo
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()){
 
                     if (listaUsuarios.contains(snapshot.getKey())){
-
+                        
                         // Con esto cogemos los valores que tenemos en la clase MapsData
                         MapsPojo mp = snapshot.child("posición").getValue(MapsPojo.class);
 
@@ -236,27 +247,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
     private void subirLatLongFirebase() {
 
-        mDatabase.child("Usuarios").child(usuario.getUsuario()).child("Grupos").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot: dataSnapshot.getChildren())
-                    claves.add(snapshot.getKey());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
-
-        spGrupos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                obtenerClave(position);
-                crearLista();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
+        Log.d("Funcion", "subirLatLong");
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
