@@ -140,7 +140,7 @@ public class AddUsuarioFragment extends Fragment {
                         if(encontrado){
                             Toast.makeText(getContext(), "El número ya está añadido al grupo.", Toast.LENGTH_SHORT).show();
                         }else {
-                            Toast.makeText(getContext(), "Se ha añadido correctamente.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Petición enviada", Toast.LENGTH_SHORT).show();
                             mDatabase.child("Usuarios_por_grupo").child(grupoID).push().setValue(key);
                             mDatabase.child("Usuarios").child(key).child("Grupos").child(grupoID).setValue(spGrupos.getSelectedItem().toString());
 
@@ -149,8 +149,8 @@ public class AddUsuarioFragment extends Fragment {
                             valores.put("nombreReceptor",nombreReceptor);
                             valores.put("tokenEmisor",tokenEmisor);
                             valores.put("tokenReceptor",tokenReceptor);
-                            valores.put("recibido","false");
-                            valores.put("unirse","false");
+                            valores.put("recibido",false);
+                            valores.put("unirse",false);
                             valores.put("grupo",spGrupos.getSelectedItem().toString());
                             valores.put("grupoID",grupoID);
 

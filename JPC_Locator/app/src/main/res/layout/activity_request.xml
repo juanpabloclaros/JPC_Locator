@@ -36,7 +36,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:textColor="#000"
-        android:text="Juan pablo quiere añadirte al grupo amigos"
         android:textAlignment="center"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"

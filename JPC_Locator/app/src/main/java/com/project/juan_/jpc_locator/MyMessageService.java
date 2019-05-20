@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
@@ -21,25 +22,15 @@ public class MyMessageService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            String title = remoteMessage.getNotification().getTitle(); //get title
-            String message = remoteMessage.getNotification().getBody(); //get message
-            String click_action = remoteMessage.getNotification().getClickAction(); //get click_action
-
-            Log.d(TAG, "Message Notification Title: " + title);
-            Log.d(TAG, "Message Notification Body: " + message);
-            Log.d(TAG, "Message Notification click_action: " + click_action);
-
-//            sendNotification(title, message,click_action);
-        }
+        crearNotificationChannel();
+        mostrarNotificacion(remoteMessage);
     }
 
     private void crearNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel notificationChannel =
                     new NotificationChannel("notificacion", "Notificacion", NotificationManager.IMPORTANCE_DEFAULT);
-            notificationChannel.setDescription("Notificacions de JPC Locator");
+            notificationChannel.setDescription("Notificaciones de JPC Locator");
             notificationChannel.setShowBadge(true);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(notificationChannel);
@@ -47,12 +38,30 @@ public class MyMessageService extends FirebaseMessagingService {
     }
 
     private void mostrarNotificacion(RemoteMessage remoteMessage) {
-        Intent intent = new Intent(this, RequestActivity.class);
+
+        Intent intent = null;
+        int icono = 0;
+
+        if (remoteMessage.getData().get("id").equals("1")){
+            intent = new Intent(MyMessageService.this, RequestActivity.class);
+            intent.putExtra("nombre",remoteMessage.getData().get("nombre"));
+            intent.putExtra("grupo",remoteMessage.getData().get("grupo"));
+            intent.putExtra("grupoID",remoteMessage.getData().get("grupoId"));
+            intent.putExtra("usuarioEmisor",remoteMessage.getData().get("uidEmisor"));
+            intent.putExtra("usuarioReceptor",remoteMessage.getData().get("uidReceptor"));
+            icono = R.drawable.ic_people_black;
+        } else if (remoteMessage.getData().get("id").equals("0")){
+            intent = new Intent(this, LoginActivity.class);
+            icono = R.drawable.ic_person_black;
+        } else if (remoteMessage.getData().get("id").equals("2")){
+            intent = new Intent(this, LoginActivity.class);
+            icono = R.drawable.ic_chat_black;
+        }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notificacion")
-                .setSmallIcon(R.drawable.ic_people_black)
+                .setSmallIcon(icono)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo))
                 .setContentTitle(remoteMessage.getData().get("title"))
                 .setContentText(remoteMessage.getData().get("body"))
@@ -60,6 +69,7 @@ public class MyMessageService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent)
                 .setChannelId("notificacion")
                 .setAutoCancel(true);
+
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
         notificationManagerCompat.notify(Integer.parseInt(remoteMessage.getData().get("id")), builder.build());
