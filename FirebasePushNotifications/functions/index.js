@@ -120,7 +120,7 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
         }
     });
 
-
+// Esta funcion se va a encargar de notificarnos cuando un usuario esté a menos de 500 metros de nosotros
 exports.sendNearNotification = functions.database.ref("/Notifications/Cerca/{emisor_id}/{receptor_id}")
     .onWrite((datasnapshot, context) => {
 

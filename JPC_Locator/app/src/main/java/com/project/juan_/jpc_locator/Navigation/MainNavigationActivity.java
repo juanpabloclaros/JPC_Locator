@@ -1,6 +1,7 @@
 package com.project.juan_.jpc_locator.Navigation;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.LoginActivity;
 import com.project.juan_.jpc_locator.R;
+
+import java.util.Objects;
 
 public class MainNavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,23 +58,14 @@ public class MainNavigationActivity extends AppCompatActivity
         subtitleTV = (TextView) headerView.findViewById(R.id.textViewSubtitle);
         usuarioRef = FirebaseDatabase.getInstance().getReference().child("Usuarios").child(usuario.getUsuario());
 
-        usuarioRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("Grupos_creados"))
-                    gruposCreados = true;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
-
         FirebaseDatabase.getInstance().getReference()
                 .child("Usuarios").child(usuario.getUsuario()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                titleTV.setText(dataSnapshot.getValue(Usuario.class).getNombre());
-                subtitleTV.setText(dataSnapshot.getValue(Usuario.class).getEmail());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    titleTV.setText(Objects.requireNonNull(dataSnapshot.getValue(Usuario.class)).getNombre());
+                    subtitleTV.setText(Objects.requireNonNull(dataSnapshot.getValue(Usuario.class)).getEmail());
+                }
             }
 
             @Override
@@ -126,6 +120,20 @@ public class MainNavigationActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
+        usuarioRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Grupos_creados"))
+                    gruposCreados = true;
+                else
+                    gruposCreados = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -150,13 +158,24 @@ public class MainNavigationActivity extends AppCompatActivity
                 getSupportActionBar().setTitle("Añadir Usuario");
                 fragmentSeleccionado = true;
             } else{
-                Toast.makeText(this, "No tienes grupos creados.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "No tienes grupos creados. Crea un grupo antes.", Toast.LENGTH_SHORT).show();
+                miFragment = new AddGroupFragment();
+                getSupportActionBar().setTitle("Crear Grupo");
+                fragmentSeleccionado = true;
             }
 
         } else if (id == R.id.nav_leave_group) {
-            miFragment = new LeaveGroupFragment();
-            getSupportActionBar().setTitle("Dejar Grupo");
-            fragmentSeleccionado = true;
+
+            if (gruposCreados){
+                miFragment = new LeaveGroupFragment();
+                getSupportActionBar().setTitle("Dejar Grupo");
+                fragmentSeleccionado = true;
+            } else{
+                Toast.makeText(this, "No perteneces a ningún grupo. ¿Quieres crear uno?", Toast.LENGTH_SHORT).show();
+                miFragment = new AddGroupFragment();
+                getSupportActionBar().setTitle("Crear Grupo");
+                fragmentSeleccionado = true;
+            }
         }
 
         if(fragmentSeleccionado){

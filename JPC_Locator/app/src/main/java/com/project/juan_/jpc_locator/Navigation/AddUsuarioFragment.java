@@ -141,8 +141,6 @@ public class AddUsuarioFragment extends Fragment {
                             Toast.makeText(getContext(), "El número ya está añadido al grupo.", Toast.LENGTH_SHORT).show();
                         }else {
                             Toast.makeText(getContext(), "Petición enviada", Toast.LENGTH_SHORT).show();
-                            mDatabase.child("Usuarios_por_grupo").child(grupoID).push().setValue(key);
-                            mDatabase.child("Usuarios").child(key).child("Grupos").child(grupoID).setValue(spGrupos.getSelectedItem().toString());
 
                             Map<String,Object> valores = new HashMap<>();
                             valores.put("nombreEmisor",nombreEmisor);

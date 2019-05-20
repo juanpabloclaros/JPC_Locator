@@ -129,9 +129,7 @@ public class LeaveGroupFragment extends Fragment {
                                     }
 
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
+                                    public void onCancelled(@NonNull DatabaseError databaseError) { }
                                 });
 
                                 // Borramos el grupo dentro del nodo de aquellos que ha creado el usuario por si acaso ese grupo lo haya creado
@@ -144,9 +142,7 @@ public class LeaveGroupFragment extends Fragment {
                                     }
 
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
+                                    public void onCancelled(@NonNull DatabaseError databaseError) { }
                                 });
                             }
                         }

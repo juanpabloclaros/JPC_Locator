@@ -17,6 +17,7 @@ public class RequestActivity extends AppCompatActivity {
     private String uidEmisor, uidReceptor, grupo, grupoID, nombre;
     private TextView mensajeTV;
     private DatabaseReference respuesta;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class RequestActivity extends AppCompatActivity {
         grupoID = getIntent().getStringExtra("grupoID");
         nombre = getIntent().getStringExtra("nombre");
         respuesta = FirebaseDatabase.getInstance().getReference().child("Notifications").child("Grupo").child(uidEmisor).child(uidReceptor);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mensajeTV.setText(nombre + " quiere añadirte al grupo " + grupo);
 
@@ -40,8 +42,9 @@ public class RequestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(RequestActivity.this, "Añadiendo a grupo.", Toast.LENGTH_SHORT).show();
-                respuesta.child("recibido").setValue(true);
                 respuesta.child("unirse").setValue(true);
+                mDatabase.child("Usuarios_por_grupo").child(grupoID).push().setValue(uidReceptor);
+                mDatabase.child("Usuarios").child(uidReceptor).child("Grupos").child(grupoID).setValue(grupo);
                 startActivity(new Intent(RequestActivity.this, LoginActivity.class));
                 finish();
             }
