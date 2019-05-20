@@ -56,6 +56,9 @@ public class MyMessageService extends FirebaseMessagingService {
         } else if (remoteMessage.getData().get("id").equals("2")){
             intent = new Intent(this, LoginActivity.class);
             icono = R.drawable.ic_chat_black;
+        } else if (remoteMessage.getData().get("id").equals("3")){
+            intent = new Intent(this, LoginActivity.class);
+            icono = R.drawable.ic_person_near;
         }
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0, intent, PendingIntent.FLAG_CANCEL_CURRENT);

@@ -110,12 +110,54 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
             //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
             //Todo esto usando el token del dispositivo al que queremos mandar.
             return admin.messaging().sendToDevice(tokenReceptor, payload)
-                .then(function (response) {
+               .then(function (response) {
                     console.log("El mensaje se ha enviado: ", response);
-                })
-                .catch(function (error) {
+               })
+               .catch(function (error) {
                     console.log("Error enviando el mensaje: ", error);
-                });
+               });
 
         }
+    });
+
+
+exports.sendNearNotification = functions.database.ref("/Notifications/Cerca/{emisor_id}/{receptor_id}")
+    .onWrite((datasnapshot, context) => {
+
+        const userData = datasnapshot.after.val();
+        console.log("userData", datasnapshot.after.val());
+
+        var reference = admin.database().ref("/Notifications/Cerca/");
+
+        const usuarioEmisor = context.params.emisor_id;
+        const usuarioReceptor = context.params.receptor_id;
+
+        const distancia = userData.distancia;
+        const nombre = userData.nombre;
+        const tokenReceptor = userData.tokenReceptor;
+
+        //Aqui necesitamos crear un payload taht será enviado hacia el dispositivo.
+        // El payload necesita tener al menos un 'data' o 'notification'.
+        //Este payload sera enviado como un Map<string,string>
+        const payload = {
+            data: {
+                id: "3",
+                title: "Usuarios cerca",
+                body: `${nombre} esta a ${distancia} metros de ti.`
+            }
+        };
+
+        //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
+        //Todo esto usando el token del dispositivo al que queremos mandar.
+        return admin.messaging().sendToDevice(tokenReceptor, payload)
+            .then(function (response) {
+                console.log("El mensaje se ha enviado: ", response);
+                // Aqui borramos la rama esa de la notificación
+                reference.child(usuarioEmisor).child(usuarioReceptor).remove()
+                    .then(() => { console.log("La referencia se ha borrado.") })
+                    .catch(error => { console.log("Error borrando la referencia ", error) });
+            })
+            .catch(function (error) {
+                console.log("Error enviando el mensaje: ", error);
+            });
     });

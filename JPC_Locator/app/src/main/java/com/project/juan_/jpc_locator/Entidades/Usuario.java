@@ -6,6 +6,7 @@ public class Usuario {
     private String email;
     private String token;
     private int numero;
+    private boolean cerca;
     private static String usuario;
 
     public Usuario() {
@@ -57,5 +58,13 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isCerca() {
+        return cerca;
+    }
+
+    public void setCerca(boolean cerca) {
+        this.cerca = cerca;
     }
 }

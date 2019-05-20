@@ -221,16 +221,20 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             markerOptions.title(snapshot.getValue(Usuario.class).getNombre());
                             markerOptions.snippet("Distancia: " + Math.ceil(results[0]) + " mts");
 
-                            Map<String,Object> valores = new HashMap<>();
-                            valores.put("nombre",snapshot.getValue(Usuario.class).getNombre());
-                            valores.put("distancia",results[0]);
-                            valores.put("tokenEmisor",tokenEmisor);
-                            valores.put("tokenReceptor",snapshot.getValue(Usuario.class).getToken());
-                            mDatabase.child("Notifications").child("Cerca").child(usuario.getUsuario()).child(snapshot.getKey()).setValue(valores);
-
+                            if (!snapshot.getValue(Usuario.class).isCerca()){
+                                Map<String,Object> valores = new HashMap<>();
+                                valores.put("nombre",snapshot.getValue(Usuario.class).getNombre());
+                                valores.put("distancia",results[0]);
+                                valores.put("tokenEmisor",tokenEmisor);
+                                valores.put("tokenReceptor",snapshot.getValue(Usuario.class).getToken());
+                                mDatabase.child("Notifications").child("Cerca").child(usuario.getUsuario()).child(snapshot.getKey()).setValue(valores);
+                                mDatabase.child("Usuarios").child(snapshot.getKey()).child("cerca").setValue(true);
+                            }
 
                             // Usamos los ArrayList para ir actualizando los markers
                             tmpRealTimeMarkers.add(mMap.addMarker(markerOptions));
+                        } else{
+                            mDatabase.child("Usuarios").child(snapshot.getKey()).child("cerca").setValue(false);
                         }
                     }
                 }
