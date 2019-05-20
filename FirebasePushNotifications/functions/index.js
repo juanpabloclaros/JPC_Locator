@@ -61,12 +61,8 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                     console.log("El mensaje se ha enviado: ", response);
                     // Aqui borramos la rama esa de la notificación
                     reference.child(usuarioEmisor).child(usuarioReceptor).remove()
-                        .then(() => {
-                            console.log("La referencia se ha borrado.")
-                        })
-                        .catch(error => {
-                            console.log("Error borrando la referencia ", error)
-                        });
+                        .then(() => {console.log("La referencia se ha borrado.")})
+                        .catch(error => {console.log("Error borrando la referencia ", error)});
                 })
                 .catch(function (error) {
                     console.log("Error enviando el mensaje: ", error);
@@ -86,6 +82,9 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                 .then(function (response) {
                     console.log("El mensaje se ha enviado: ", response);
                     // Aqui borramos la rama esa de la notificación
+                    reference.child(usuarioEmisor).child(usuarioReceptor).remove()
+                        .then(() => { console.log("La referencia se ha borrado.") })
+                        .catch(error => { console.log("Error borrando la referencia ", error) });
                 })
                 .catch(function (error) {
                     console.log("Error enviando el mensaje: ", error);
