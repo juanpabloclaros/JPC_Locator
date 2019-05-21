@@ -221,7 +221,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                             markerOptions.title(snapshot.getValue(Usuario.class).getNombre());
                             markerOptions.snippet("Distancia: " + Math.ceil(results[0]) + " mts");
 
-                            if (Math.ceil(results[0]) == 450 || Math.ceil(results[0]) == 350 || Math.ceil(results[0]) == 250 || Math.ceil(results[0]) == 150 || Math.ceil(results[0]) == 50){
+                            if (Math.ceil(results[0]) == 450 ||Math.ceil(results[0]) == 250 || Math.ceil(results[0]) == 50){
                                 Map<String,Object> valores = new HashMap<>();
                                 valores.put("nombre",snapshot.getValue(Usuario.class).getNombre());
                                 valores.put("distancia",Math.ceil(results[0]));
@@ -232,8 +232,6 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
 
                             // Usamos los ArrayList para ir actualizando los markers
                             tmpRealTimeMarkers.add(mMap.addMarker(markerOptions));
-                        } else{
-                            mDatabase.child("Usuarios").child(snapshot.getKey()).child("cerca").setValue(false);
                         }
                     }
                 }
