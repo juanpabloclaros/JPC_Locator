@@ -153,11 +153,79 @@ exports.sendNearNotification = functions.database.ref("/Notifications/Cerca/{emi
             .then(function (response) {
                 console.log("El mensaje se ha enviado: ", response);
                 // Aqui borramos la rama esa de la notificación
-                reference.child(usuarioEmisor).child(usuarioReceptor).remove()
-                    .then(() => { console.log("La referencia se ha borrado.") })
-                    .catch(error => { console.log("Error borrando la referencia ", error) });
+                if (distancia == 50) {
+                    reference.child(usuarioEmisor).child(usuarioReceptor).remove()
+                        .then(() => { console.log("La referencia se ha borrado.") })
+                        .catch(error => { console.log("Error borrando la referencia ", error) });
+                }
             })
             .catch(function (error) {
                 console.log("Error enviando el mensaje: ", error);
             });
+    });
+
+
+// Esta funcion se va a encargar de notificarnos cuando un usuario mande un mensaje por el chat
+exports.sendChatNotification = functions.database.ref("/Chat/{grupoID}/{mensajeID}")
+    .onWrite((datasnapshot, context) => {
+
+        const userData = datasnapshot.after.val();
+        console.log("userData", datasnapshot.after.val());
+
+        const grupoID = context.params.grupoID;
+
+        const uid = userData.from;
+        const mensaje = userData.mensaje;
+        const nombre = userData.nombre;
+        const grupo = userData.grupo;
+        
+
+        let referencia = admin.database().ref(`/Usuarios_por_grupo/${grupoID}`);
+
+        const payload = {
+            data: {
+                id: "2",
+                title: `${nombre} ha mandado un mensaje al grupo ${grupo}`,
+                body: mensaje,
+                grupoId: grupoID,
+                grupo: grupo
+            }
+        };
+
+        referencia.on("value", function (snapshot) {
+
+            snapshot.forEach(function (data) {
+                let tokenReceptor = admin.database().ref(`/Usuarios/${data.val()}/token`).once('value');
+                if (uid !== data.val()) {
+                    console.log('Usuario: ', data.val());
+
+                    tokenReceptor.then(result => {
+                        let token = result.val();
+                        console.log('Token: ', token);
+                        
+                        admin.messaging().sendToDevice(token, payload)
+                            .then(function (response) {
+                                console.log("El mensaje se ha enviado: ", response);
+                            })
+                            .catch(function (error) {
+                                console.log("Error enviando el mensaje: ", error);
+                            });
+                    });
+                }
+            });
+            
+            }, function (errorObject) {
+                console.log("La lectura falló: ", errorObject);
+            });
+
+
+        //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
+        //Todo esto usando el token del dispositivo al que queremos mandar.
+        //return admin.messaging().sendToDevice(tokens, payload)
+        //    .then(function (response) {
+        //        console.log("El mensaje se ha enviado: ", response);
+        //    })
+        //    .catch(function (error) {
+        //        console.log("Error enviando el mensaje: ", error);
+        //    });
     });

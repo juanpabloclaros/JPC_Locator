@@ -121,9 +121,7 @@ public class GroupChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
     }
 
@@ -152,6 +150,7 @@ public class GroupChatActivity extends AppCompatActivity {
             infoMensajeMap.put("fecha",fechaActual);
             infoMensajeMap.put("hora",tiempoActual);
             infoMensajeMap.put("from",from);
+            infoMensajeMap.put("grupo",nombreGrupo);
 
             mDatabase.child("Chat").child(claveGrupo).child(mensajeKey).updateChildren(infoMensajeMap);
         }

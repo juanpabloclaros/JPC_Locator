@@ -54,7 +54,9 @@ public class MyMessageService extends FirebaseMessagingService {
             intent = new Intent(this, LoginActivity.class);
             icono = R.drawable.ic_person_black;
         } else if (remoteMessage.getData().get("id").equals("2")){
-            intent = new Intent(this, LoginActivity.class);
+            intent = new Intent(this, GroupChatActivity.class);
+            intent.putExtra("clave",remoteMessage.getData().get("grupoId"));
+            intent.putExtra("groupName",remoteMessage.getData().get("grupo"));
             icono = R.drawable.ic_chat_black;
         } else if (remoteMessage.getData().get("id").equals("3")){
             intent = new Intent(this, LoginActivity.class);
