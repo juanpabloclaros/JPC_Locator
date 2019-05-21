@@ -217,15 +217,4 @@ exports.sendChatNotification = functions.database.ref("/Chat/{grupoID}/{mensajeI
             }, function (errorObject) {
                 console.log("La lectura falló: ", errorObject);
             });
-
-
-        //Esto nos permite usar FCM para enviar notificacion/mensaje hacia el dispositivo.
-        //Todo esto usando el token del dispositivo al que queremos mandar.
-        //return admin.messaging().sendToDevice(tokens, payload)
-        //    .then(function (response) {
-        //        console.log("El mensaje se ha enviado: ", response);
-        //    })
-        //    .catch(function (error) {
-        //        console.log("Error enviando el mensaje: ", error);
-        //    });
     });
