@@ -21,6 +21,7 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
         const usuarioEmisor = context.params.emisor_id;
         const nombreEmisor = userData.nombreEmisor;
         const tokenEmisor = userData.tokenEmisor;
+        const claveEmisor = userData.clave_emisor;
 
         const usuarioReceptor = context.params.receptor_id;
         const nombreReceptor = userData.nombreReceptor;
@@ -103,7 +104,8 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                     grupo: nombreGrupo,
                     grupoId: grupoID,
                     uidEmisor: usuarioEmisor,
-                    uidReceptor: usuarioReceptor
+                    uidReceptor: usuarioReceptor,
+                    claveEmisor: claveEmisor
                }
             };
 

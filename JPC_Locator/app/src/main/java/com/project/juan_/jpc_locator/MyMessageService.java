@@ -7,16 +7,34 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.util.Base64;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.project.juan_.jpc_locator.Entidades.Usuario;
+
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 
 public class MyMessageService extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMessagingServic";
+    private Usuario usuario = new Usuario();
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -49,8 +67,40 @@ public class MyMessageService extends FirebaseMessagingService {
             intent.putExtra("grupoID",remoteMessage.getData().get("grupoId"));
             intent.putExtra("usuarioEmisor",remoteMessage.getData().get("uidEmisor"));
             intent.putExtra("usuarioReceptor",remoteMessage.getData().get("uidReceptor"));
+            intent.putExtra("clave_emisor",remoteMessage.getData().get("claveEmisor"));
             icono = R.drawable.ic_people_black;
         } else if (remoteMessage.getData().get("id").equals("0")){
+
+            mDatabase.child("Notifications").child("Grupo").child(remoteMessage.getData().get("uidEmisor")).child(remoteMessage.getData().get("uidReceptor")).child("clave_receptor").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    try {
+                        ECDH ecdh = new ECDH();
+                        Log.d("clavePublica", dataSnapshot.getValue().toString());
+                        byte publicKeyData[] = Base64.decode(dataSnapshot.getValue().toString(), Base64.DEFAULT);
+                        X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
+                        KeyFactory kf = KeyFactory.getInstance("ECDH", "SC");
+                        PublicKey publicKey = kf.generatePublic(spec);
+
+                        byte[] claveCompartida = ecdh.generateSharedKey(publicKey, ecdh.getPrivKey());
+                        Log.d("claveCompartida", claveCompartida.toString());
+                        usuario.setClaveCompartida(claveCompartida);
+                    } catch (InvalidAlgorithmParameterException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchProviderException e) {
+                        e.printStackTrace();
+                    } catch (InvalidKeySpecException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchAlgorithmException e) {
+                        e.printStackTrace();
+                    } catch (InvalidKeyException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) { }
+            });
             intent = new Intent(this, LoginActivity.class);
             icono = R.drawable.ic_person_black;
         } else if (remoteMessage.getData().get("id").equals("2")){

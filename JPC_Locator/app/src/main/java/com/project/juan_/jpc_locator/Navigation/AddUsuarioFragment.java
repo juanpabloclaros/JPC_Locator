@@ -2,9 +2,11 @@ package com.project.juan_.jpc_locator.Navigation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,10 +22,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.project.juan_.jpc_locator.ECDH;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.R;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,6 +114,7 @@ public class AddUsuarioFragment extends Fragment {
 
                 mDatabase.child("Usuarios").addListenerForSingleValueEvent(new ValueEventListener() {
 
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -142,18 +150,35 @@ public class AddUsuarioFragment extends Fragment {
                         }else {
                             Toast.makeText(getContext(), "Petición enviada", Toast.LENGTH_SHORT).show();
 
-                            Map<String,Object> valores = new HashMap<>();
-                            valores.put("nombreEmisor",nombreEmisor);
-                            valores.put("nombreReceptor",nombreReceptor);
-                            valores.put("tokenEmisor",tokenEmisor);
-                            valores.put("tokenReceptor",tokenReceptor);
-                            valores.put("recibido",false);
-                            valores.put("unirse",false);
-                            valores.put("grupo",spGrupos.getSelectedItem().toString());
-                            valores.put("grupoID",grupoID);
+                            try {
+                                // Inicializamos ECDH para que se genere la clave pública que se va a intercambiar con el otro usuario
+                                ECDH ecdh = new ECDH();
 
-                            mDatabase.child("Notifications").child("Grupo").child(usuario.getUsuario()).child(key).setValue(valores);
-                            txtTelefono.setText("");
+                                usuario.setClavePrivada(ecdh.getPrivKey());
+
+                                byte[] encodedPublicKey = ecdh.getPubKey().getEncoded();
+                                String b64PublicKey = Base64.getEncoder().encodeToString(encodedPublicKey);
+
+                                Map<String,Object> valores = new HashMap<>();
+                                valores.put("nombreEmisor",nombreEmisor);
+                                valores.put("nombreReceptor",nombreReceptor);
+                                valores.put("tokenEmisor",tokenEmisor);
+                                valores.put("tokenReceptor",tokenReceptor);
+                                valores.put("recibido",false);
+                                valores.put("unirse",false);
+                                valores.put("grupo",spGrupos.getSelectedItem().toString());
+                                valores.put("grupoID",grupoID);
+                                valores.put("clave_emisor",b64PublicKey);
+
+                                mDatabase.child("Notifications").child("Grupo").child(usuario.getUsuario()).child(key).setValue(valores);
+                                txtTelefono.setText("");
+                            } catch (InvalidAlgorithmParameterException e) {
+                                e.printStackTrace();
+                            } catch (NoSuchProviderException e) {
+                                e.printStackTrace();
+                            } catch (InvalidKeySpecException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 

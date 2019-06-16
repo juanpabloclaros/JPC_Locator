@@ -52,21 +52,27 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
         mensajeViewHolder.mensajeRecibidoText.setVisibility(View.INVISIBLE);
         mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
 
-        if (fromUsuarioId.equals(mensajeEnviadoId)){
+        try {
+            byte[] mensajeDescifrado = Algoritmo_AES.decrypt(usuario.getClaveCompartida(), mensajes.getMensaje().getBytes());
 
-            mensajeViewHolder.mensajeEnviadoText.setVisibility(View.VISIBLE);
+            if (fromUsuarioId.equals(mensajeEnviadoId)){
 
-            mensajeViewHolder.mensajeEnviadoText.setBackgroundResource(R.drawable.mensajes_enviados);
-            mensajeViewHolder.mensajeEnviadoText.setTextColor(Color.BLACK);
-            mensajeViewHolder.mensajeEnviadoText.setText(mensajes.getNombre() + "\n\n" + mensajes.getMensaje() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
-        } else{
-            mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
+                mensajeViewHolder.mensajeEnviadoText.setVisibility(View.VISIBLE);
 
-            mensajeViewHolder.mensajeRecibidoText.setVisibility(View.VISIBLE);
+                mensajeViewHolder.mensajeEnviadoText.setBackgroundResource(R.drawable.mensajes_enviados);
+                mensajeViewHolder.mensajeEnviadoText.setTextColor(Color.BLACK);
+                mensajeViewHolder.mensajeEnviadoText.setText(mensajes.getNombre() + "\n\n" + mensajeDescifrado.toString() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
+            } else{
+                mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
 
-            mensajeViewHolder.mensajeRecibidoText.setBackgroundResource(R.drawable.mensajes_recibidos);
-            mensajeViewHolder.mensajeRecibidoText.setTextColor(Color.BLACK);
-            mensajeViewHolder.mensajeRecibidoText.setText(mensajes.getNombre() + "\n\n" + mensajes.getMensaje() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
+                mensajeViewHolder.mensajeRecibidoText.setVisibility(View.VISIBLE);
+
+                mensajeViewHolder.mensajeRecibidoText.setBackgroundResource(R.drawable.mensajes_recibidos);
+                mensajeViewHolder.mensajeRecibidoText.setTextColor(Color.BLACK);
+                mensajeViewHolder.mensajeRecibidoText.setText(mensajes.getNombre() + "\n\n" + mensajeDescifrado.toString() + "\n \n" + mensajes.getHora() + " - " + mensajes.getFecha());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -126,33 +126,42 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
     private void guardarMensaje() {
-        String mensaje = entradaMensajeTxt.getText().toString();
-        String mensajeKey = mDatabase.child("Chat").child(claveGrupo).push().getKey();
-        from = usuario.getUsuario();
+        try {
+            String mensaje = entradaMensajeTxt.getText().toString();
+            String mensajeKey = mDatabase.child("Chat").child(claveGrupo).push().getKey();
+            from = usuario.getUsuario();
 
-        if (TextUtils.isEmpty(mensaje)){
-            Toast.makeText(this, "Por favor escriba un mensaje primero...", Toast.LENGTH_SHORT).show();
-        } else{
-            Calendar calendarDate = Calendar.getInstance();
-            SimpleDateFormat formatoFecha = new SimpleDateFormat("MMM dd, yyyy");
-            fechaActual = formatoFecha.format(calendarDate.getTime());
+            if (TextUtils.isEmpty(mensaje)) {
+                Toast.makeText(this, "Por favor escriba un mensaje primero...", Toast.LENGTH_SHORT).show();
+            } else {
+                Calendar calendarDate = Calendar.getInstance();
+                SimpleDateFormat formatoFecha = new SimpleDateFormat("MMM dd, yyyy");
+                fechaActual = formatoFecha.format(calendarDate.getTime());
 
-            Calendar calendarTime = Calendar.getInstance();
-            SimpleDateFormat formatoTiempo = new SimpleDateFormat("hh:mm a");
-            tiempoActual = formatoTiempo.format(calendarDate.getTime());
+                Calendar calendarTime = Calendar.getInstance();
+                SimpleDateFormat formatoTiempo = new SimpleDateFormat("hh:mm a");
+                tiempoActual = formatoTiempo.format(calendarDate.getTime());
 
-            HashMap<String,Object> mensajeGrupoKey = new HashMap<>();
-            mDatabase.child("Chat").child(claveGrupo).updateChildren(mensajeGrupoKey);
+                HashMap<String, Object> mensajeGrupoKey = new HashMap<>();
+                mDatabase.child("Chat").child(claveGrupo).updateChildren(mensajeGrupoKey);
 
-            HashMap<String,Object> infoMensajeMap = new HashMap<>();
-            infoMensajeMap.put("nombre",nombreUsuario);
-            infoMensajeMap.put("mensaje",mensaje);
-            infoMensajeMap.put("fecha",fechaActual);
-            infoMensajeMap.put("hora",tiempoActual);
-            infoMensajeMap.put("from",from);
-            infoMensajeMap.put("grupo",nombreGrupo);
+//                byte[] mensajeCifrado = Algoritmo_AES.encrypt(usuario.getClaveCompartida(), mensaje.getBytes());
+                String mensajeCifrado = new String(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()), "UTF-8");
+                String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensajeCifrado.getBytes()), "UTF-8");
+                Log.e("mensajeCifrado", mensajeCifrado);
 
-            mDatabase.child("Chat").child(claveGrupo).child(mensajeKey).updateChildren(infoMensajeMap);
+                HashMap<String, Object> infoMensajeMap = new HashMap<>();
+                infoMensajeMap.put("nombre", nombreUsuario);
+                infoMensajeMap.put("mensaje", mensajeCifrado.toString());
+                infoMensajeMap.put("fecha", fechaActual);
+                infoMensajeMap.put("hora", tiempoActual);
+                infoMensajeMap.put("from", from);
+                infoMensajeMap.put("grupo", nombreGrupo);
+
+                mDatabase.child("Chat").child(claveGrupo).child(mensajeKey).updateChildren(infoMensajeMap);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
