@@ -1,5 +1,7 @@
 package com.project.juan_.jpc_locator;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import com.project.juan_.jpc_locator.Entidades.Usuario;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -125,6 +128,7 @@ public class GroupChatActivity extends AppCompatActivity {
         });
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
     private void guardarMensaje() {
         try {
             String mensaje = entradaMensajeTxt.getText().toString();
@@ -146,13 +150,15 @@ public class GroupChatActivity extends AppCompatActivity {
                 mDatabase.child("Chat").child(claveGrupo).updateChildren(mensajeGrupoKey);
 
 //                byte[] mensajeCifrado = Algoritmo_AES.encrypt(usuario.getClaveCompartida(), mensaje.getBytes());
-                String mensajeCifrado = new String(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()), "UTF-8");
-                String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensajeCifrado.getBytes()), "UTF-8");
+                String mensajeCifrado = Base64.getEncoder().encodeToString(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()));
+//                String mensajeCifrado = new String(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()), "UTF-8");
+                byte[] decodedString = Base64.getDecoder().decode(mensajeCifrado.getBytes("UTF-8"));
+                String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), decodedString), "UTF-8");
                 Log.e("mensajeCifrado", mensajeCifrado);
 
                 HashMap<String, Object> infoMensajeMap = new HashMap<>();
                 infoMensajeMap.put("nombre", nombreUsuario);
-                infoMensajeMap.put("mensaje", mensajeCifrado.toString());
+                infoMensajeMap.put("mensaje", mensajeCifrado);
                 infoMensajeMap.put("fecha", fechaActual);
                 infoMensajeMap.put("hora", tiempoActual);
                 infoMensajeMap.put("from", from);
