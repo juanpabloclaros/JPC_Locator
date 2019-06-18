@@ -96,6 +96,7 @@ public class MyMessageService extends FirebaseMessagingService {
                 SharedPreferences.Editor editor = preferences.edit();
                 String sharedKey = Base64.getEncoder().encodeToString(claveCompartida);
                 editor.putString("claveCompartida", sharedKey);
+                editor.apply();
 
             } catch (InvalidAlgorithmParameterException e) {
                 e.printStackTrace();

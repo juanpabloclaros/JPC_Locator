@@ -158,7 +158,7 @@ public class AddUsuarioFragment extends Fragment {
                                 // Inicializamos ECDH para que se genere la clave pública que se va a intercambiar con el otro usuario
                                 ECDH ecdh = new ECDH();
 
-                                byte[] encodedPrivateKey = ecdh.getPubKey().getEncoded();
+                                byte[] encodedPrivateKey = ecdh.getPrivKey().getEncoded();
                                 String b64PrivateKey = Base64.getEncoder().encodeToString(encodedPrivateKey);
 
                                 SharedPreferences.Editor editor = getActivity().getSharedPreferences(grupoID, MODE_PRIVATE).edit();

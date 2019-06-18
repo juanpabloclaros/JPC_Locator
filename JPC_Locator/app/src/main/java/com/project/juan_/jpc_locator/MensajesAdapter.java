@@ -66,7 +66,7 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
 //            byte[] decodedString = Base64.getDecoder().decode(mensajes.getMensaje().getBytes("UTF-8"));
 //            String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), decodedString), "UTF-8");
             byte[] decodedString = Base64.getDecoder().decode(claveCompartida.getBytes("UTF-8"));
-            String mensajeDes = Base64.getEncoder().encodeToString(Algoritmo_AES.decrypt(decodedString, mensajes.getMensaje().getBytes()));
+            String mensajeDes = new String(Algoritmo_AES.decrypt(decodedString,  Base64.getDecoder().decode(mensajes.getMensaje().getBytes("UTF-8"))));
 
             if (fromUsuarioId.equals(mensajeEnviadoId)){
 

@@ -68,7 +68,7 @@ public class GroupChatActivity extends AppCompatActivity {
         entradaMensajeTxt = (EditText) findViewById(R.id.inputGroupMessage);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mensajesAdapter = new MensajesAdapter(listaMensajes,preferences.getString("claveCompartida2", "FEDCBA98765432100123456789ABCDEF"));
+        mensajesAdapter = new MensajesAdapter(listaMensajes,preferences.getString("claveCompartida", "FEDCBA98765432100123456789ABCDEF"));
         listaMensajeUsuario = (RecyclerView) findViewById(R.id.listaMensajesPrivadoUsuario);
         linearLayoutManager = new LinearLayoutManager(this);
         listaMensajeUsuario.setLayoutManager(linearLayoutManager);
@@ -160,8 +160,9 @@ public class GroupChatActivity extends AppCompatActivity {
 
 //                String mensajeCifrado = Base64.getEncoder().encodeToString(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()));
 //                String mensajeCifrado = new String(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()), "UTF-8");
-                byte[] decodString = Base64.getDecoder().decode(mensajeCifrado.getBytes("UTF-8"));
-                String mensajeDes = new String(Algoritmo_AES.decrypt(preferences.getString("claveCompartida", "FEDCBA98765432100123456789ABCDEF").getBytes(), decodString), "UTF-8");
+                byte[] decodString = Base64.getDecoder().decode(mensajeCifrado);
+                //String mensajeDes = new String(Algoritmo_AES.decrypt(preferences.getString("claveCompartida", "FEDCBA98765432100123456789ABCDEF").getBytes("UTF-8"), decodString), "UTF-8");
+                String mensajeDes = new String(Algoritmo_AES.decrypt(decodedString, Algoritmo_AES.encrypt(decodedString, mensaje.getBytes())), "UTF-8");
 //                Log.e("mensajeCifrado", mensajeCifrado);
 
                 HashMap<String, Object> infoMensajeMap = new HashMap<>();

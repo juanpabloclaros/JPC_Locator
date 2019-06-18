@@ -80,7 +80,8 @@ public class RequestActivity extends AppCompatActivity {
                             byte[] claveCompartida = ecdh.generateSharedKey(publicKey, ecdh.getPrivKey());
                             SharedPreferences.Editor editor = getSharedPreferences(grupoID, MODE_PRIVATE).edit();
                             String sharedKey = Base64.getEncoder().encodeToString(claveCompartida);
-                            editor.putString("claveCompartida2", sharedKey);
+                            editor.putString("claveCompartida", sharedKey);
+                            editor.apply();
 
                             byte[] encodedPublicKey = ecdh.getPubKey().getEncoded();
                             String b64PublicKey = java.util.Base64.getEncoder().encodeToString(encodedPublicKey);
