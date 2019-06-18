@@ -2,6 +2,7 @@ package com.project.juan_.jpc_locator.Navigation;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,6 +27,7 @@ import com.project.juan_.jpc_locator.ECDH;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 import com.project.juan_.jpc_locator.R;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class AddUsuarioFragment extends Fragment {
 
@@ -154,7 +158,12 @@ public class AddUsuarioFragment extends Fragment {
                                 // Inicializamos ECDH para que se genere la clave pública que se va a intercambiar con el otro usuario
                                 ECDH ecdh = new ECDH();
 
-                                usuario.setClavePrivada(ecdh.getPrivKey());
+                                byte[] encodedPrivateKey = ecdh.getPubKey().getEncoded();
+                                String b64PrivateKey = Base64.getEncoder().encodeToString(encodedPrivateKey);
+
+                                SharedPreferences.Editor editor = getActivity().getSharedPreferences(grupoID, MODE_PRIVATE).edit();
+                                editor.putString("clavePrivada", b64PrivateKey);
+                                editor.apply();
 
                                 byte[] encodedPublicKey = ecdh.getPubKey().getEncoded();
                                 String b64PublicKey = Base64.getEncoder().encodeToString(encodedPublicKey);

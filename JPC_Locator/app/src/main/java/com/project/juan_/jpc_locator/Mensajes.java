@@ -1,16 +1,17 @@
 package com.project.juan_.jpc_locator;
 
 public class Mensajes {
-    private String from, mensaje, hora, fecha, nombre;
+    private String from, mensaje, hora, fecha, nombre, grupoID;
 
     public Mensajes(){}
 
-    public Mensajes(String from, String mensaje, String hora, String fecha, String nombre) {
+    public Mensajes(String from, String mensaje, String hora, String fecha, String nombre, String grupoID) {
         this.from = from;
         this.mensaje = mensaje;
         this.hora = hora;
         this.fecha = fecha;
         this.nombre = nombre;
+        this.grupoID = grupoID;
     }
 
     public String getFrom() {
@@ -51,5 +52,13 @@ public class Mensajes {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getGrupoID() {
+        return grupoID;
+    }
+
+    public void setGrupoID(String grupoID) {
+        this.grupoID = grupoID;
     }
 }

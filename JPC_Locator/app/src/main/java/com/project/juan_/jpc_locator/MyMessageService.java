@@ -1,16 +1,17 @@
 package com.project.juan_.jpc_locator;
 
+import android.annotation.TargetApi;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.util.Base64;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -22,7 +23,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.PrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.Base64;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -55,6 +60,7 @@ public class MyMessageService extends FirebaseMessagingService {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
     private void mostrarNotificacion(RemoteMessage remoteMessage) {
 
         Intent intent = null;
@@ -71,36 +77,39 @@ public class MyMessageService extends FirebaseMessagingService {
             icono = R.drawable.ic_people_black;
         } else if (remoteMessage.getData().get("id").equals("0")){
 
-            mDatabase.child("Notifications").child("Grupo").child(remoteMessage.getData().get("uidEmisor")).child(remoteMessage.getData().get("uidReceptor")).child("clave_receptor").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    try {
-                        ECDH ecdh = new ECDH();
-                        Log.d("clavePublica", dataSnapshot.getValue().toString());
-                        byte publicKeyData[] = Base64.decode(dataSnapshot.getValue().toString(), Base64.DEFAULT);
-                        X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
-                        KeyFactory kf = KeyFactory.getInstance("ECDH", "SC");
-                        PublicKey publicKey = kf.generatePublic(spec);
+            final String id_grupo = remoteMessage.getData().get("grupoId");
 
-                        byte[] claveCompartida = ecdh.generateSharedKey(publicKey, ecdh.getPrivKey());
-                        Log.d("claveCompartida", claveCompartida.toString());
-                        usuario.setClaveCompartida(claveCompartida);
-                    } catch (InvalidAlgorithmParameterException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchProviderException e) {
-                        e.printStackTrace();
-                    } catch (InvalidKeySpecException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    } catch (InvalidKeyException e) {
-                        e.printStackTrace();
-                    }
-                }
+            try {
+                ECDH ecdh = new ECDH();
+                Log.d("clavePublica", remoteMessage.getData().get("claveReceptor"));
+                byte publicKeyData[] = Base64.getDecoder().decode(remoteMessage.getData().get("claveReceptor").getBytes("UTF-8"));
+                X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
+                KeyFactory kf = KeyFactory.getInstance("ECDH", "SC");
+                PublicKey publicKey = kf.generatePublic(spec);
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) { }
-            });
+                SharedPreferences preferences = getSharedPreferences(id_grupo, MODE_PRIVATE);
+                String clavePrivada = preferences.getString("clavePrivada","FEDCBA98765432100123456789ABCDEF");
+                byte privateKeyData[] = Base64.getDecoder().decode(clavePrivada.getBytes("UTF-8"));
+                PrivateKey privKey = kf.generatePrivate(new PKCS8EncodedKeySpec(privateKeyData));
+
+                byte[] claveCompartida = ecdh.generateSharedKey(publicKey, privKey);
+                SharedPreferences.Editor editor = preferences.edit();
+                String sharedKey = Base64.getEncoder().encodeToString(claveCompartida);
+                editor.putString("claveCompartida", sharedKey);
+
+            } catch (InvalidAlgorithmParameterException e) {
+                e.printStackTrace();
+            } catch (NoSuchProviderException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             intent = new Intent(this, LoginActivity.class);
             icono = R.drawable.ic_person_black;
         } else if (remoteMessage.getData().get("id").equals("2")){

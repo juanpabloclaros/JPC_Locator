@@ -26,6 +26,7 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
         const usuarioReceptor = context.params.receptor_id;
         const nombreReceptor = userData.nombreReceptor;
         const tokenReceptor = userData.tokenReceptor;
+        const claveReceptor = userData.clave_receptor;
 
         const nombreGrupo = userData.grupo;
         const grupoID = userData.grupoID;
@@ -51,7 +52,9 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                 data: {
                     id: "0",
                     title: "Respuesta de peticion",
-                    body: `${nombreReceptor} ha rechazado la solicitud de unirse al grupo ${nombreGrupo}`
+                    body: `${nombreReceptor} ha rechazado la solicitud de unirse al grupo ${nombreGrupo}`,
+                    grupoId: "nada",
+                    claveReceptor: claveReceptor
                 }
             };
 
@@ -73,7 +76,9 @@ exports.sendNotification = functions.database.ref("/Notifications/Grupo/{emisor_
                 data: {
                     id: "0",
                     title: "Respuesta de peticion",
-                    body: `${nombreReceptor} ha aceptado la solicitud de unirse al grupo ${nombreGrupo}`
+                    body: `${nombreReceptor} ha aceptado la solicitud de unirse al grupo ${nombreGrupo}`,
+                    grupoId: grupoID,
+                    claveReceptor: claveReceptor
                 }
             };
 

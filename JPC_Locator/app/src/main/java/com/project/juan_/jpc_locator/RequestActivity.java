@@ -1,12 +1,12 @@
 package com.project.juan_.jpc_locator;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,8 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.project.juan_.jpc_locator.Entidades.Usuario;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.util.Base64;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -70,13 +72,15 @@ public class RequestActivity extends AppCompatActivity {
                         try {
                             ECDH ecdh = new ECDH();
                             Log.d("clavePublica", dataSnapshot.getValue().toString());
-                            byte publicKeyData[] = Base64.decode(dataSnapshot.getValue().toString(), Base64.DEFAULT);
+                            byte publicKeyData[] = Base64.getDecoder().decode(dataSnapshot.getValue().toString().getBytes("UTF-8"));
                             X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
                             KeyFactory kf = KeyFactory.getInstance("ECDH", "SC");
                             PublicKey publicKey = kf.generatePublic(spec);
 
                             byte[] claveCompartida = ecdh.generateSharedKey(publicKey, ecdh.getPrivKey());
-                            usuario.setClaveCompartida(claveCompartida);
+                            SharedPreferences.Editor editor = getSharedPreferences(grupoID, MODE_PRIVATE).edit();
+                            String sharedKey = Base64.getEncoder().encodeToString(claveCompartida);
+                            editor.putString("claveCompartida2", sharedKey);
 
                             byte[] encodedPublicKey = ecdh.getPubKey().getEncoded();
                             String b64PublicKey = java.util.Base64.getEncoder().encodeToString(encodedPublicKey);
@@ -96,6 +100,8 @@ public class RequestActivity extends AppCompatActivity {
                         } catch (NoSuchAlgorithmException e) {
                             e.printStackTrace();
                         } catch (InvalidKeyException e) {
+                            e.printStackTrace();
+                        } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
                     }

@@ -9,8 +9,6 @@ public class Usuario {
     private String token;
     private int numero;
     private static String usuario;
-    private static PrivateKey clavePrivada;
-    private static byte[] claveCompartida;
 
     public Usuario() {
     }
@@ -61,21 +59,5 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public static PrivateKey getClavePrivada() {
-        return clavePrivada;
-    }
-
-    public static void setClavePrivada(PrivateKey clavePública) {
-        Usuario.clavePrivada = clavePública;
-    }
-
-    public static byte[] getClaveCompartida() {
-        return claveCompartida;
-    }
-
-    public static void setClaveCompartida(byte[] claveCompartida) {
-        Usuario.claveCompartida = claveCompartida;
     }
 }

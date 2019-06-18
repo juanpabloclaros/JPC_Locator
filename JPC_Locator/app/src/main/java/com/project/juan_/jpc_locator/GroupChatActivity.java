@@ -1,6 +1,7 @@
 package com.project.juan_.jpc_locator;
 
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,6 +46,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager;
     private MensajesAdapter mensajesAdapter;
     private RecyclerView listaMensajeUsuario;
+    private SharedPreferences preferences;
 
     private String nombreGrupo,claveGrupo, nombreUsuario, fechaActual, tiempoActual, from;
 
@@ -57,6 +59,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
         nombreGrupo = getIntent().getExtras().get("groupName").toString();
         claveGrupo = getIntent().getExtras().get("clave").toString();
+        preferences = getSharedPreferences(claveGrupo,MODE_PRIVATE);
         mToolbar = findViewById(R.id.group_chat_bar_layout);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(nombreGrupo);
@@ -65,7 +68,7 @@ public class GroupChatActivity extends AppCompatActivity {
         entradaMensajeTxt = (EditText) findViewById(R.id.inputGroupMessage);
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mensajesAdapter = new MensajesAdapter(listaMensajes);
+        mensajesAdapter = new MensajesAdapter(listaMensajes,preferences.getString("claveCompartida2", "FEDCBA98765432100123456789ABCDEF"));
         listaMensajeUsuario = (RecyclerView) findViewById(R.id.listaMensajesPrivadoUsuario);
         linearLayoutManager = new LinearLayoutManager(this);
         listaMensajeUsuario.setLayoutManager(linearLayoutManager);
@@ -150,11 +153,16 @@ public class GroupChatActivity extends AppCompatActivity {
                 mDatabase.child("Chat").child(claveGrupo).updateChildren(mensajeGrupoKey);
 
 //                byte[] mensajeCifrado = Algoritmo_AES.encrypt(usuario.getClaveCompartida(), mensaje.getBytes());
-                String mensajeCifrado = Base64.getEncoder().encodeToString(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()));
+                Log.e("clave", preferences.getString("claveCompartida2", "nada"));
+                Log.e("clavePrivada", preferences.getString("clavePrivada", "nada"));
+                byte[] decodedString = Base64.getDecoder().decode(preferences.getString("claveCompartida", "FEDCBA98765432100123456789ABCDEF").getBytes("UTF-8"));
+                String mensajeCifrado = Base64.getEncoder().encodeToString(Algoritmo_AES.encrypt(decodedString, mensaje.getBytes()));
+
+//                String mensajeCifrado = Base64.getEncoder().encodeToString(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()));
 //                String mensajeCifrado = new String(Algoritmo_AES.encrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), mensaje.getBytes()), "UTF-8");
-                byte[] decodedString = Base64.getDecoder().decode(mensajeCifrado.getBytes("UTF-8"));
-                String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), decodedString), "UTF-8");
-                Log.e("mensajeCifrado", mensajeCifrado);
+                byte[] decodString = Base64.getDecoder().decode(mensajeCifrado.getBytes("UTF-8"));
+                String mensajeDes = new String(Algoritmo_AES.decrypt(preferences.getString("claveCompartida", "FEDCBA98765432100123456789ABCDEF").getBytes(), decodString), "UTF-8");
+//                Log.e("mensajeCifrado", mensajeCifrado);
 
                 HashMap<String, Object> infoMensajeMap = new HashMap<>();
                 infoMensajeMap.put("nombre", nombreUsuario);
@@ -163,6 +171,7 @@ public class GroupChatActivity extends AppCompatActivity {
                 infoMensajeMap.put("hora", tiempoActual);
                 infoMensajeMap.put("from", from);
                 infoMensajeMap.put("grupo", nombreGrupo);
+                infoMensajeMap.put("grupoID", claveGrupo);
 
                 mDatabase.child("Chat").child(claveGrupo).child(mensajeKey).updateChildren(infoMensajeMap);
             }

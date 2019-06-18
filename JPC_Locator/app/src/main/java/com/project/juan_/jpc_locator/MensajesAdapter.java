@@ -1,6 +1,8 @@
 package com.project.juan_.jpc_locator;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -16,12 +18,15 @@ import com.project.juan_.jpc_locator.Entidades.Usuario;
 import java.util.Base64;
 import java.util.List;
 
+
 public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.MensajeViewHolder> {
     private List<Mensajes> listaMensajes;
     private Usuario usuario = new Usuario();
+    private String claveCompartida;
 
-    public MensajesAdapter (List<Mensajes> listaMensajes){
+    public MensajesAdapter (List<Mensajes> listaMensajes, String claveCompartida){
         this.listaMensajes = listaMensajes;
+        this.claveCompartida = claveCompartida;
     }
 
     public class MensajeViewHolder extends RecyclerView.ViewHolder{
@@ -33,6 +38,7 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
 
             mensajeEnviadoText = (TextView) itemView.findViewById(R.id.mensajeEnviadoTV);
             mensajeRecibidoText = (TextView) itemView.findViewById(R.id.mensajeRecibidoTV);
+
         }
     }
 
@@ -57,9 +63,10 @@ public class MensajesAdapter extends RecyclerView.Adapter<MensajesAdapter.Mensaj
         mensajeViewHolder.mensajeEnviadoText.setVisibility(View.INVISIBLE);
 
         try {
-//            byte[] mensajeDescifrado = Algoritmo_AES.decrypt(usuario.getClaveCompartida(), mensajes.getMensaje().getBytes());
-            byte[] decodedString = Base64.getDecoder().decode(mensajes.getMensaje().getBytes("UTF-8"));
-            String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), decodedString), "UTF-8");
+//            byte[] decodedString = Base64.getDecoder().decode(mensajes.getMensaje().getBytes("UTF-8"));
+//            String mensajeDes = new String(Algoritmo_AES.decrypt("FEDCBA98765432100123456789ABCDEF".getBytes(), decodedString), "UTF-8");
+            byte[] decodedString = Base64.getDecoder().decode(claveCompartida.getBytes("UTF-8"));
+            String mensajeDes = Base64.getEncoder().encodeToString(Algoritmo_AES.decrypt(decodedString, mensajes.getMensaje().getBytes()));
 
             if (fromUsuarioId.equals(mensajeEnviadoId)){
 
