@@ -278,7 +278,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                     }
                 });
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, new LocationListener() {
+        mLocationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 if (location != null) {

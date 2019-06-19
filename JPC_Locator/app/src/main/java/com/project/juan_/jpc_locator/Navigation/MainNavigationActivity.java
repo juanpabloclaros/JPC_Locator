@@ -38,6 +38,7 @@ public class MainNavigationActivity extends AppCompatActivity
     private Usuario usuario = new Usuario();
     private DatabaseReference usuarioRef;
     private Boolean gruposCreados = false;
+    private Boolean gruposPertenecer = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +135,19 @@ public class MainNavigationActivity extends AppCompatActivity
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
+        usuarioRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("Grupos"))
+                    gruposPertenecer = true;
+                else
+                    gruposPertenecer = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        });
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -166,7 +180,7 @@ public class MainNavigationActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_leave_group) {
 
-            if (gruposCreados){
+            if (gruposPertenecer){
                 miFragment = new LeaveGroupFragment();
                 getSupportActionBar().setTitle("Dejar Grupo");
                 fragmentSeleccionado = true;
