@@ -65,6 +65,7 @@ public class MyMessageService extends FirebaseMessagingService {
 
         Intent intent = null;
         int icono = 0;
+        String body = remoteMessage.getData().get("body");
 
         if (remoteMessage.getData().get("id").equals("1")){
             intent = new Intent(MyMessageService.this, RequestActivity.class);
@@ -110,14 +111,27 @@ public class MyMessageService extends FirebaseMessagingService {
                 e.printStackTrace();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             intent = new Intent(this, LoginActivity.class);
             icono = R.drawable.ic_person_black;
         } else if (remoteMessage.getData().get("id").equals("2")){
-            intent = new Intent(this, GroupChatActivity.class);
-            intent.putExtra("clave",remoteMessage.getData().get("grupoId"));
-            intent.putExtra("groupName",remoteMessage.getData().get("grupo"));
-            icono = R.drawable.ic_chat_black;
+            try {
+                intent = new Intent(this, GroupChatActivity.class);
+                intent.putExtra("clave",remoteMessage.getData().get("grupoId"));
+                intent.putExtra("groupName",remoteMessage.getData().get("grupo"));
+                icono = R.drawable.ic_chat_black;
+
+                SharedPreferences preferences = getSharedPreferences(remoteMessage.getData().get("grupoId"), MODE_PRIVATE);
+                String sharedKey = preferences.getString("claveCompartida", "FEDCBA98765432100123456789ABCDEF");
+                byte[] decodedString = Base64.getDecoder().decode(sharedKey.getBytes("UTF-8"));
+                body = new String(Algoritmo_AES.decrypt(decodedString,  Base64.getDecoder().decode(remoteMessage.getData().get("body").getBytes("UTF-8"))));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (remoteMessage.getData().get("id").equals("3")){
             intent = new Intent(this, LoginActivity.class);
             icono = R.drawable.ic_person_near;
@@ -129,7 +143,7 @@ public class MyMessageService extends FirebaseMessagingService {
                 .setSmallIcon(icono)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.drawable.logo))
                 .setContentTitle(remoteMessage.getData().get("title"))
-                .setContentText(remoteMessage.getData().get("body"))
+                .setContentText(body)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setChannelId("notificacion")
